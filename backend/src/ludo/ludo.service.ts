@@ -228,6 +228,11 @@ export class LudoService {
     return this.gameStateManager.getDecisionTimeLeft(gameState);
   }
 
+  // Actualizar tiempos de acción para todos los jugadores
+  updatePlayerActionTimes(gameState: LudoGameState): void {
+    this.gameStateManager.updatePlayerActionTimes(gameState);
+  }
+
   // Manejar acción automática cuando se agota el tiempo
   private handleTimeoutAction(gameId: string, playerId: string): void {
     const gameState = this.gameStateManager.getGameState(gameId);

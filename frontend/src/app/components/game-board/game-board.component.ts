@@ -39,6 +39,27 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     return this.playerExists('yellow');
   }
 
+  // Métodos para determinar el jugador actual
+  getCurrentPlayerColor(): string | null {
+    if (!this.gameInfo || !this.gameInfo.players.length) return null;
+
+    const currentPlayerIndex = this.gameInfo.currentPlayer;
+    const currentPlayer = this.gameInfo.players[currentPlayerIndex];
+    return currentPlayer ? currentPlayer.color : null;
+  }
+
+  shouldShowDice(color: string): boolean {
+    if (!this.gameInfo?.canRollDice) {
+      console.log(`Dice ${color}: canRollDice is false`);
+      return false;
+    }
+
+    const currentPlayerColor = this.getCurrentPlayerColor();
+    const shouldShow = currentPlayerColor === color;
+    console.log(`Dice ${color}: currentPlayerColor=${currentPlayerColor}, shouldShow=${shouldShow}`);
+    return shouldShow;
+  }
+
   // Referencias a los componentes de dados
   @ViewChild('redDice') redDice!: DiceComponent;
   @ViewChild('blueDice') blueDice!: DiceComponent;

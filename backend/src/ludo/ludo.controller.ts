@@ -89,6 +89,9 @@ export class LudoController {
 
     // Si no se proporciona playerId, devolver solo información básica
     if (!playerId) {
+      // Actualizar tiempos de acción para todos los jugadores
+      this.ludoService.updatePlayerActionTimes(gameInfo);
+      
       return {
         gameId: gameInfo.gameId,
         players: gameInfo.players,
@@ -115,9 +118,8 @@ export class LudoController {
       gameInfo.currentPlayer ===
       gameInfo.players.findIndex((p) => p.id === playerId);
 
-    // Calcular información del temporizador de decisión
-    const decisionTimeLeft = this.ludoService.getDecisionTimeLeft(gameInfo);
-    const isThisPlayerTurn = isPlayerTurn && (gameInfo.canRollDice || gameInfo.canMovePiece);
+    // Actualizar tiempos de acción para todos los jugadores
+    this.ludoService.updatePlayerActionTimes(gameInfo);
 
     return {
       gameId: gameInfo.gameId,
@@ -131,7 +133,6 @@ export class LudoController {
       canRollDice: isPlayerTurn ? gameInfo.canRollDice : false,
       canMovePiece: isPlayerTurn ? gameInfo.canMovePiece : false,
       selectedPieceId: isPlayerTurn ? gameInfo.selectedPieceId : undefined,
-      decisionTimeLeft: isThisPlayerTurn ? decisionTimeLeft : undefined,
       decisionDuration: gameInfo.decisionDuration,
       lastUpdated: gameInfo.lastUpdated,
       version: gameInfo.version,
@@ -365,9 +366,8 @@ export class LudoController {
       gameInfo.currentPlayer ===
       gameInfo.players.findIndex((p) => p.id === playerId);
 
-    // Calcular información del temporizador de decisión
-    const decisionTimeLeft = this.ludoService.getDecisionTimeLeft(gameInfo);
-    const isThisPlayerTurn = isPlayerTurn && (gameInfo.canRollDice || gameInfo.canMovePiece);
+    // Actualizar tiempos de acción para todos los jugadores
+    this.ludoService.updatePlayerActionTimes(gameInfo);
 
     return {
       ...baseStatus,
@@ -377,7 +377,6 @@ export class LudoController {
       selectedPieceId: isPlayerTurn ? gameInfo.selectedPieceId : undefined,
       playerColor: player.color,
       playerName: player.name,
-      decisionTimeLeft: isThisPlayerTurn ? decisionTimeLeft : undefined,
     };
   }
 }

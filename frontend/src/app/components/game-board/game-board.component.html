@@ -27,31 +27,35 @@
     </div>
   </div>
 
-  @if (gameInfo?.canRollDice) {
-    <div class="dice-rows" style="margin-top: -30px;">
-      <div class="dice-space dice-left">
+  <div class="dice-rows" style="margin-top: -30px;">
+    <div class="dice-space dice-left">
+      @if (shouldShowDice('red')) {
         <app-dice #redDice [diceType]="'red'" (click)="onDiceClick('red')"></app-dice>
-      </div>
-      <div class="dice-space dice-right">
-        <app-dice #blueDice [diceType]="'blue'" (click)="onDiceClick('blue')"></app-dice>
-      </div>
+      }
     </div>
-  }
+    <div class="dice-space dice-right">
+      @if (shouldShowDice('blue')) {
+        <app-dice #blueDice [diceType]="'blue'" (click)="onDiceClick('blue')"></app-dice>
+      }
+    </div>
+  </div>
 
   <div class="board-placeholder">
     <app-ludo-board [gameInfo]="gameInfo"></app-ludo-board>
   </div>
 
-  @if (gameInfo?.canRollDice) {
-    <div class="dice-rows" style="margin-bottom: -30px; z-index: 1;">
-      <div class="dice-space dice-left">
+  <div class="dice-rows" style="margin-bottom: -30px; z-index: 1;">
+    <div class="dice-space dice-left">
+      @if (shouldShowDice('green')) {
         <app-dice #greenDice [diceType]="'green'" (click)="onDiceClick('green')"></app-dice>
-      </div>
-      <div class="dice-space dice-right">
-        <app-dice #yellowDice [diceType]="'yellow'" (click)="onDiceClick('yellow')"></app-dice>
-      </div>
+      }
     </div>
-  }
+    <div class="dice-space dice-right">
+      @if (shouldShowDice('yellow')) {
+        <app-dice #yellowDice [diceType]="'yellow'" (click)="onDiceClick('yellow')"></app-dice>
+      }
+    </div>
+  </div>
 
   <!-- Fila inferior de jugadores -->
   <div class="players-row bottom-row">
