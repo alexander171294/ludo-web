@@ -81,6 +81,11 @@
     }
   }
 
+  &.star-path {
+    background-color: rgb(215 215 215);
+    background-color: #00000042;
+  }
+
   &:hover {
     background-color: #d5dbdb;
     transform: scale(1.05);
