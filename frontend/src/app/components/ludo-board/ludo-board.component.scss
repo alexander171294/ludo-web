@@ -1,1 +1,194 @@
+.ludo-board {
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  grid-template-rows: repeat(15, 1fr);
+  gap: 2px;
+  width: 600px;
+  height: 600px;
+  margin: 20px auto;
+  background-color: #2c3e50;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
 
+.oneBlock {
+  background-color: #ecf0f1;
+  border: 1px solid #2c3f51;
+  border-radius: 3px;
+  min-height: 30px;
+  min-width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &.arrow-blue {
+    svg {
+      transform: rotate(90deg);
+      fill: #2e9de5;
+      width: 70%;
+    }
+  }
+  &.blue-begin {
+    background-color: #2e9de580;
+  }
+  &.blue-path {
+    background-color: #2e9de5;
+  }
+
+  &.red-begin {
+    background-color: #ef422f80;
+  }
+  &.red-path {
+    background-color: #ef422f;
+  }
+
+  &.red-arrow {
+    svg {
+      fill: #EF422F;
+      width: 70%;
+    }
+  }
+
+  &.yellow-begin {
+    background-color: #ecba1180;
+  }
+  &.yellow-path {
+    background-color: #ecba11;
+  }
+
+  &.yellow-arrow {
+    svg {
+      transform: rotate(-180deg);
+      fill: #ECBA11;
+      width: 70%;
+    }
+  }
+
+  &.green-begin {
+    background-color: #5dbd4d80;
+  }
+  &.green-path {
+    background-color: #5dbd4d;
+  }
+
+  &.green-arrow {
+    svg {
+      transform: rotate(-90deg);
+      fill: #5DBE4D;
+      width: 70%;
+    }
+  }
+
+  &:hover {
+    background-color: #d5dbdb;
+    transform: scale(1.05);
+  }
+}
+
+.start-zone {
+  grid-column: span 6;
+  grid-row: span 6;
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 2px;
+  padding: 5px;
+  border: 3px solid;
+
+  &.red {
+    background-color: #EF422F;
+    border-color: #2c3e50;
+    grid-column: 1 / 7;
+    grid-row: 1 / 7;
+  }
+
+  &.blue {
+    background-color: #2E9DE6;
+    border-color: #2c3e50;
+    grid-column: 10 / 16;
+    grid-row: 1 / 7;
+  }
+
+  &.green {
+    background-color: #5DBE4D;
+    border-color: #2c3e50;
+    grid-column: 1 / 7;
+    grid-row: 10 / 16;
+  }
+
+  &.yellow {
+    background-color: #ECBA11;
+    border-color: #2c3e50;
+    grid-column: 10 / 16;
+    grid-row: 10 / 16;
+  }
+
+  .oneBlock {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+
+  }
+}
+
+.end-zone {
+  grid-column: 7 / 10;
+  grid-row: 7 / 10;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+  background-color: #34495e;
+  border-radius: 8px;
+  padding: 5px;
+  border: 3px solid #2c3e50;
+
+  .end {
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+
+    &.red {
+      background-color: #EF422F;
+    }
+
+    &.blue {
+      background-color: #2E9DE6;
+    }
+
+    &.green {
+      background-color: #5DBE4D;
+    }
+
+    &.yellow {
+      background-color: #ECBA11;
+      color: #2c3e50;
+    }
+  }
+}
+
+// Ruta del juego (camino principal)
+.oneBlock:nth-child(n+1):nth-child(-n+15) {
+  // Primera fila - camino horizontal superior
+}
+
+.oneBlock:nth-child(15n+1) {
+  // Primera columna - camino vertical izquierdo
+}
+
+.oneBlock:nth-child(15n+15) {
+  // Última columna - camino vertical derecho
+}
+
+.oneBlock:nth-child(n+211):nth-child(-n+225) {
+  // Última fila - camino horizontal inferior
+}
+
+// Estilos adicionales para el camino central - removidos los colores naranjas
+// Los bloques del camino mantendrán el color base #ecf0f1
