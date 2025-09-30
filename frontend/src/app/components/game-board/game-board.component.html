@@ -77,4 +77,10 @@
   </div>
 </div>
 
-<app-start-game></app-start-game>
+@if (gameInfo?.gamePhase === 'waiting') {
+  <app-start-game
+    [gameInfo]="gameInfo"
+    [isHost]="isHost"
+    (startGame)="onStartGame()">
+  </app-start-game>
+}

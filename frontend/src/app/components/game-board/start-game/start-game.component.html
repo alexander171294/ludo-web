@@ -1,19 +1,22 @@
 <div class="popup">
   <article>
     <div class="playerStatus">
-      <div class="player red connected">
-        Alexander
-      </div>
-      <div class="player blue">
-
-      </div>
-      <div class="player green">
-
-      </div>
-      <div class="player yellow">
-
-      </div>
+      @for (color of colors; track color) {
+        @if (getPlayerByColor(color)) {
+          <div class="player {{ color }} connected">
+            {{ getPlayerByColor(color)?.name }}
+          </div>
+        } @else {
+          <div class="player {{ color }}">
+            <!-- Jugador no conectado -->
+          </div>
+        }
+      }
     </div>
-    <button disabled>Comenzar</button>
+    <button
+      [disabled]="!canStartGame()"
+      (click)="onStartGame()">
+      Comenzar
+    </button>
   </article>
 </div>

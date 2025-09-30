@@ -1,8 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LudoBoardComponent } from '../ludo-board/ludo-board.component';
 import { DiceComponent } from '../dice/dice.component';
 import { StartGameComponent } from './start-game/start-game.component';
+import { LudoService, RoomInfo } from '../../services/ludo.service';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-game-board',
@@ -11,11 +13,14 @@ import { StartGameComponent } from './start-game/start-game.component';
   styleUrls: ['./game-board.component.scss'],
   imports: [LudoBoardComponent, DiceComponent, StartGameComponent]
 })
-export class GameBoardComponent implements OnInit {
+export class GameBoardComponent implements OnInit, OnDestroy {
   roomCode: string = '';
   playerName: string = '';
   selectedColor: string = '';
+  playerId: string = '';
   isHost: boolean = false;
+  gameInfo: RoomInfo | null = null;
+  private gameStateSubscription?: Subscription;
 
   // Referencias a los componentes de dados
   @ViewChild('redDice') redDice!: DiceComponent;
@@ -60,7 +65,8 @@ export class GameBoardComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private ludoService: LudoService
   ) {}
 
   ngOnInit() {
@@ -68,8 +74,48 @@ export class GameBoardComponent implements OnInit {
       this.roomCode = params['roomCode'] || '';
       this.playerName = params['playerName'] || '';
       this.selectedColor = params['color'] || '';
+      this.playerId = params['playerId'] || '';
       this.isHost = params['isHost'] === 'true';
+
+      if (this.roomCode) {
+        this.startGameStatePolling();
+      }
     });
+  }
+
+  ngOnDestroy() {
+    if (this.gameStateSubscription) {
+      this.gameStateSubscription.unsubscribe();
+    }
+  }
+
+  startGameStatePolling() {
+    // Consultar el estado inmediatamente
+    this.loadGameState();
+
+    // Luego cada segundo
+    this.gameStateSubscription = interval(1000).subscribe(() => {
+      this.loadGameState();
+    });
+  }
+
+  loadGameState() {
+    this.ludoService.getRoomInfo(this.roomCode).subscribe({
+      next: (response) => {
+        if (!('error' in response)) {
+          this.gameInfo = response;
+        }
+      },
+      error: (error) => {
+        console.error('Error loading game state:', error);
+      }
+    });
+  }
+
+  onStartGame() {
+    // Aquí se implementaría la lógica para iniciar el juego
+    console.log('Iniciando juego...');
+    // TODO: Implementar endpoint para iniciar el juego
   }
 
   getColorName(): string {
