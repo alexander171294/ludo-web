@@ -51,11 +51,11 @@ export class DiceComponent implements OnInit {
       this.isThrowing = true;
     }, 50);
 
-    // Mostrar el resultado después de la animación
+    // Mostrar el resultado después de la animación (2 segundos)
     setTimeout(() => {
       this.diceValue = result;
       this.diceRolled.emit(result);
-    }, 700);
+    }, 2000);
   }
 
   /**

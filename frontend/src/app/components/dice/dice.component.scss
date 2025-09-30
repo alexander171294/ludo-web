@@ -107,11 +107,11 @@
   transition: 0.5s cubic-bezier(0.42, 1.57, 0.62, 0.86);
 
   &.rolling {
-    animation: rotatePerFace 3s cubic-bezier(0.42, 1.57, 0.62, 0.86) infinite;
+    animation: rotatePerFace 6s cubic-bezier(0.42, 1.57, 0.62, 0.86) infinite;
   }
 
   &.throw {
-    animation: rotateDice 0.7s ease-in reverse, throwDice 1s linear;
+    animation: rotateDice 1.5s ease-in reverse, throwDice 2s linear;
   }
 
   @include diceStyle();
@@ -158,28 +158,28 @@
     transform: rotate3d(1, 1, 1, 0deg);
   }
   100% {
-    transform: rotate3d(1, 1, 1, 720deg);
+    transform: rotate3d(1, 1, 1, 1440deg);
   }
 }
 
 @keyframes rotatePerFace {
   16% {
-    transform: rotate3d(-0.1, 0.6, -0.4, 180deg);
+    transform: rotate3d(-0.1, 0.6, -0.4, 360deg);
   }
   32% {
-    transform: rotate3d(-0.85, -0.42, 0.73, 180deg);
+    transform: rotate3d(-0.85, -0.42, 0.73, 360deg);
   }
   48% {
-    transform: rotate3d(-0.8, 0.3, -0.75, 180deg);
+    transform: rotate3d(-0.8, 0.3, -0.75, 360deg);
   }
   64% {
-    transform: rotate3d(0.3, 0.45, 0.9, 180deg);
+    transform: rotate3d(0.3, 0.45, 0.9, 360deg);
   }
   80% {
-    transform: rotate3d(-0.16, 0.6, 0.18, 180deg);
+    transform: rotate3d(-0.16, 0.6, 0.18, 360deg);
   }
   100% {
-    transform: rotate3d(-0.1, 0.3, -1, 180deg);
+    transform: rotate3d(-0.1, 0.3, -1, 360deg);
   }
 }
 
