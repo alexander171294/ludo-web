@@ -19,195 +19,828 @@
 
   <div class="start-zone red six-six">
     <div class="sarea">
-      <div class="start-pawn sp1">
-        <app-chip color="red" [selected]="true"></app-chip>
-      </div>
-      <div class="start-pawn sp2">
-
-      </div>
-      <div class="start-pawn sp3">
-        <app-chip color="red"></app-chip>
-      </div>
-      <div class="start-pawn sp4">
-        <app-chip color="red"></app-chip>
+      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('red'); let i = index">
+        <app-chip
+          *ngIf="slot.chip"
+          [color]="slot.chip.color"
+          [selected]="slot.chip.selected"
+          (click)="onChipClick(slot.chip!)">
+        </app-chip>
       </div>
     </div>
   </div>
   <div class="start-zone blue six-six">
     <div class="sarea">
-      <div class="start-pawn sp1"></div>
-      <div class="start-pawn sp2"></div>
-      <div class="start-pawn sp3"></div>
-      <div class="start-pawn sp4"></div>
+      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('blue'); let i = index">
+        <app-chip
+          *ngIf="slot.chip"
+          [color]="slot.chip.color"
+          [selected]="slot.chip.selected"
+          (click)="onChipClick(slot.chip!)">
+        </app-chip>
+      </div>
     </div>
   </div>
   <div class="start-zone green six-six">
     <div class="sarea">
-      <div class="start-pawn sp1">
-        <app-chip color="green"></app-chip>
+      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('green'); let i = index">
+        <app-chip
+          *ngIf="slot.chip"
+          [color]="slot.chip.color"
+          [selected]="slot.chip.selected"
+          (click)="onChipClick(slot.chip!)">
+        </app-chip>
       </div>
-      <div class="start-pawn sp2">
-        <app-chip color="green"></app-chip>
-      </div>
-      <div class="start-pawn sp3">
-        <app-chip color="green"></app-chip>
-      </div>
-      <div class="start-pawn sp4"></div>
     </div>
   </div>
   <div class="start-zone yellow six-six">
     <div class="sarea">
-      <div class="start-pawn sp1"></div>
-      <div class="start-pawn sp2"></div>
-      <div class="start-pawn sp3"></div>
-      <div class="start-pawn sp4"></div>
+      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('yellow'); let i = index">
+        <app-chip
+          *ngIf="slot.chip"
+          [color]="slot.chip.color"
+          [selected]="slot.chip.selected"
+          (click)="onChipClick(slot.chip!)">
+        </app-chip>
+      </div>
     </div>
   </div>
 
 
-  <div class="oneBlock p11"></div>
-  <div class="oneBlock arrow-blue p12">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M403.7 107.1C392.1 96 375 92.9 360.3 99.2C345.6 105.5 336 120 336 136L336 272.3L163.7 107.2C152.1 96 135 92.9 120.3 99.2C105.6 105.5 96 120 96 136L96 504C96 520 105.6 534.5 120.3 540.8C135 547.1 152.1 544 163.7 532.9L336 367.7L336 504C336 520 345.6 534.5 360.3 540.8C375 547.1 392.1 544 403.7 532.9L595.7 348.9C603.6 341.4 608 330.9 608 320C608 309.1 603.5 298.7 595.7 291.1L403.7 107.1z"/></svg>
-  </div>
-  <div class="oneBlock p13"></div>
-  <div class="oneBlock p10"></div>
-  <div class="oneBlock blue-path cp1"></div>
-  <div class="oneBlock p14 blue-begin ">
-    <app-chip color="blue"></app-chip>
-  </div>
-  <div class="oneBlock p9 star-path">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"/></svg>
-  </div>
-  <div class="oneBlock blue-path cp2"></div>
-  <div class="oneBlock p15"></div>
-  <div class="oneBlock p8"></div>
-  <div class="oneBlock blue-path cp3"></div>
-  <div class="oneBlock p16"></div>
-  <div class="oneBlock p7"></div>
-  <div class="oneBlock blue-path cp4"></div>
-  <div class="oneBlock p17"></div>
-  <div class="oneBlock p6"></div>
-  <div class="oneBlock blue-path cp5"></div>
-  <div class="oneBlock p18"></div>
-
-  <div class="oneBlock p0"></div>
-  <div class="oneBlock p1 red-begin"></div>
-  <div class="oneBlock p2"></div>
-  <div class="oneBlock p3"></div>
-  <div class="oneBlock p4"></div>
-  <div class="oneBlock p5">
-    <app-chip color="red"></app-chip>
-  </div>
-
-  <div class="oneBlock p19"></div>
-  <div class="oneBlock p20"></div>
-  <div class="oneBlock p21"></div>
-  <div class="oneBlock p22 star-path">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"/></svg>
-  </div>
-  <div class="oneBlock p23"></div>
-  <div class="oneBlock p24">
-    <app-chip color="blue"></app-chip>
-  </div>
-
-  <div class="oneBlock p51 red-arrow">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M403.7 107.1C392.1 96 375 92.9 360.3 99.2C345.6 105.5 336 120 336 136L336 272.3L163.7 107.2C152.1 96 135 92.9 120.3 99.2C105.6 105.5 96 120 96 136L96 504C96 520 105.6 534.5 120.3 540.8C135 547.1 152.1 544 163.7 532.9L336 367.7L336 504C336 520 345.6 534.5 360.3 540.8C375 547.1 392.1 544 403.7 532.9L595.7 348.9C603.6 341.4 608 330.9 608 320C608 309.1 603.5 298.7 595.7 291.1L403.7 107.1z"/></svg>
-  </div>
-  <div class="oneBlock red-path cp1"></div>
-  <div class="oneBlock red-path cp2"></div>
-  <div class="oneBlock red-path cp3"></div>
-  <div class="oneBlock red-path cp4"></div>
-  <div class="oneBlock red-path cp5"></div>
-
-  <div class="oneBlock yellow-path cp5"></div>
-  <div class="oneBlock yellow-path cp4"></div>
-  <div class="oneBlock yellow-path cp3"></div>
-  <div class="oneBlock yellow-path cp2"></div>
-  <div class="oneBlock yellow-path cp1"></div>
-  <div class="oneBlock p25 yellow-arrow">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M403.7 107.1C392.1 96 375 92.9 360.3 99.2C345.6 105.5 336 120 336 136L336 272.3L163.7 107.2C152.1 96 135 92.9 120.3 99.2C105.6 105.5 96 120 96 136L96 504C96 520 105.6 534.5 120.3 540.8C135 547.1 152.1 544 163.7 532.9L336 367.7L336 504C336 520 345.6 534.5 360.3 540.8C375 547.1 392.1 544 403.7 532.9L595.7 348.9C603.6 341.4 608 330.9 608 320C608 309.1 603.5 298.7 595.7 291.1L403.7 107.1z"/></svg>
-  </div>
-
-  <div class="oneBlock p50"></div>
-  <div class="oneBlock p49"></div>
-  <div class="oneBlock p48 star-path">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"/></svg>
-  </div>
-  <div class="oneBlock p47"></div>
-  <div class="oneBlock p46"></div>
-  <div class="oneBlock p45"></div>
-
-  <div class="oneBlock p31"></div>
-  <div class="oneBlock p30"></div>
-  <div class="oneBlock p29"></div>
-  <div class="oneBlock p28"></div>
-  <div class="oneBlock p27 yellow-begin">
-    <div class="stack over">
-      <app-chip color="yellow"></app-chip>
-      <app-chip color="yellow"></app-chip>
-    </div>
-    <div class="stack">
-      <app-chip color="yellow"></app-chip>
-      <app-chip color="yellow"></app-chip>
-    </div>
-    <div class="stack last">
-      <app-chip color="blue"></app-chip>
+  <div class="oneBlock p11" (click)="onPositionClick(11)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(11))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(11)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
     </div>
   </div>
-  <div class="oneBlock p26"></div>
-
-  <div class="oneBlock p44"></div>
-  <div class="oneBlock green-path cp5"></div>
-  <div class="oneBlock p32"></div>
-  <div class="oneBlock p43"></div>
-  <div class="oneBlock green-path cp4"></div>
-  <div class="oneBlock p33"></div>
-
-  <div class="oneBlock p42"></div>
-  <div class="oneBlock green-path cp3"></div>
-  <div class="oneBlock p34"></div>
-  <div class="oneBlock p41"></div>
-  <div class="oneBlock green-path cp2"></div>
-  <div class="oneBlock p35 star-path">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"/></svg>
-    <app-chip color="green"></app-chip>
-  </div>
-
-  <div class="oneBlock p40 green-begin"></div>
-  <div class="oneBlock green-path cp1"></div>
-  <div class="oneBlock p36"></div>
-  <div class="oneBlock p39"></div>
-  <div class="oneBlock p38 green-arrow">
+  <div class="oneBlock arrow-blue p12" (click)="onPositionClick(12)">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M403.7 107.1C392.1 96 375 92.9 360.3 99.2C345.6 105.5 336 120 336 136L336 272.3L163.7 107.2C152.1 96 135 92.9 120.3 99.2C105.6 105.5 96 120 96 136L96 504C96 520 105.6 534.5 120.3 540.8C135 547.1 152.1 544 163.7 532.9L336 367.7L336 504C336 520 345.6 534.5 360.3 540.8C375 547.1 392.1 544 403.7 532.9L595.7 348.9C603.6 341.4 608 330.9 608 320C608 309.1 603.5 298.7 595.7 291.1L403.7 107.1z"/></svg>
+    <div [ngClass]="getStackClass(getChipsAtPosition(12))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(12)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
   </div>
-  <div class="oneBlock p37"></div>
+  <div class="oneBlock p13" (click)="onPositionClick(13)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(13))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(13)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p10" (click)="onPositionClick(10)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(10))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(10)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock blue-path cp1" (click)="onPositionClick(56)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(56))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(56)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p14 blue-begin" (click)="onPositionClick(14)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(14))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(14)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p9 star-path" (click)="onPositionClick(9)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"/></svg>
+    <div [ngClass]="getStackClass(getChipsAtPosition(9))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(9)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock blue-path cp2" (click)="onPositionClick(57)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(57))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(57)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p15" (click)="onPositionClick(15)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(15))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(15)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p8" (click)="onPositionClick(8)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(8))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(8)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock blue-path cp3" (click)="onPositionClick(58)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(58))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(58)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p16" (click)="onPositionClick(16)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(16))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(16)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p7" (click)="onPositionClick(7)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(7))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(7)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock blue-path cp4" (click)="onPositionClick(59)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(59))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(59)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p17" (click)="onPositionClick(17)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(17))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(17)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p6" (click)="onPositionClick(6)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(6))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(6)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock blue-path cp5" (click)="onPositionClick(60)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(60))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(60)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p18" (click)="onPositionClick(18)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(18))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(18)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+
+  <div class="oneBlock p0" (click)="onPositionClick(0)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(0))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(0)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p1 red-begin" (click)="onPositionClick(1)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(1))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(1)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p2" (click)="onPositionClick(2)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(2))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(2)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p3" (click)="onPositionClick(3)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(3))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(3)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p4" (click)="onPositionClick(4)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(4))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(4)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p5" (click)="onPositionClick(5)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(5))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(5)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+
+  <div class="oneBlock p19" (click)="onPositionClick(19)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(19))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(19)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p20" (click)="onPositionClick(20)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(20))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(20)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p21" (click)="onPositionClick(21)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(21))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(21)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p22 star-path" (click)="onPositionClick(22)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"/></svg>
+    <div [ngClass]="getStackClass(getChipsAtPosition(22))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(22)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p23" (click)="onPositionClick(23)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(23))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(23)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p24" (click)="onPositionClick(24)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(24))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(24)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+
+  <div class="oneBlock p51 red-arrow" (click)="onPositionClick(51)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M403.7 107.1C392.1 96 375 92.9 360.3 99.2C345.6 105.5 336 120 336 136L336 272.3L163.7 107.2C152.1 96 135 92.9 120.3 99.2C105.6 105.5 96 120 96 136L96 504C96 520 105.6 534.5 120.3 540.8C135 547.1 152.1 544 163.7 532.9L336 367.7L336 504C336 520 345.6 534.5 360.3 540.8C375 547.1 392.1 544 403.7 532.9L595.7 348.9C603.6 341.4 608 330.9 608 320C608 309.1 603.5 298.7 595.7 291.1L403.7 107.1z"/></svg>
+    <div [ngClass]="getStackClass(getChipsAtPosition(51))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(51)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock red-path cp1" (click)="onPositionClick(51)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(51))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(51)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock red-path cp2" (click)="onPositionClick(52)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(52))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(52)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock red-path cp3" (click)="onPositionClick(53)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(53))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(53)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock red-path cp4" (click)="onPositionClick(54)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(54))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(54)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock red-path cp5" (click)="onPositionClick(55)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(55))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(55)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+
+  <div class="oneBlock yellow-path cp5" (click)="onPositionClick(65)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(65))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(65)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock yellow-path cp4" (click)="onPositionClick(64)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(64))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(64)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock yellow-path cp3" (click)="onPositionClick(63)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(63))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(63)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock yellow-path cp2" (click)="onPositionClick(62)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(62))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(62)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock yellow-path cp1" (click)="onPositionClick(61)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(61))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(61)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p25 yellow-arrow" (click)="onPositionClick(25)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M403.7 107.1C392.1 96 375 92.9 360.3 99.2C345.6 105.5 336 120 336 136L336 272.3L163.7 107.2C152.1 96 135 92.9 120.3 99.2C105.6 105.5 96 120 96 136L96 504C96 520 105.6 534.5 120.3 540.8C135 547.1 152.1 544 163.7 532.9L336 367.7L336 504C336 520 345.6 534.5 360.3 540.8C375 547.1 392.1 544 403.7 532.9L595.7 348.9C603.6 341.4 608 330.9 608 320C608 309.1 603.5 298.7 595.7 291.1L403.7 107.1z"/></svg>
+    <div [ngClass]="getStackClass(getChipsAtPosition(25))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(25)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+
+  <div class="oneBlock p50" (click)="onPositionClick(50)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(50))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(50)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p49" (click)="onPositionClick(49)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(49))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(49)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p48 star-path" (click)="onPositionClick(48)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"/></svg>
+    <div [ngClass]="getStackClass(getChipsAtPosition(48))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(48)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p47" (click)="onPositionClick(47)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(47))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(47)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p46" (click)="onPositionClick(46)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(46))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(46)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p45" (click)="onPositionClick(45)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(45))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(45)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+
+  <div class="oneBlock p31" (click)="onPositionClick(31)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(31))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(31)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p30" (click)="onPositionClick(30)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(30))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(30)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p29" (click)="onPositionClick(29)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(29))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(29)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p28" (click)="onPositionClick(28)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(28))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(28)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p27 yellow-begin" (click)="onPositionClick(27)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(27))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(27)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p26" (click)="onPositionClick(26)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(26))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(26)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+
+  <div class="oneBlock p44" (click)="onPositionClick(44)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(44))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(44)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock green-path cp5" (click)="onPositionClick(70)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(70))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(70)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p32" (click)="onPositionClick(32)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(32))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(32)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p43" (click)="onPositionClick(43)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(43))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(43)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock green-path cp4" (click)="onPositionClick(69)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(69))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(69)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p33" (click)="onPositionClick(33)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(33))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(33)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+
+  <div class="oneBlock p42" (click)="onPositionClick(42)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(42))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(42)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock green-path cp3" (click)="onPositionClick(68)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(68))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(68)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p34" (click)="onPositionClick(34)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(34))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(34)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p41" (click)="onPositionClick(41)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(41))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(41)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock green-path cp2" (click)="onPositionClick(67)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(67))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(67)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p35 star-path" (click)="onPositionClick(35)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M341.5 45.1C337.4 37.1 329.1 32 320.1 32C311.1 32 302.8 37.1 298.7 45.1L225.1 189.3L65.2 214.7C56.3 216.1 48.9 222.4 46.1 231C43.3 239.6 45.6 249 51.9 255.4L166.3 369.9L141.1 529.8C139.7 538.7 143.4 547.7 150.7 553C158 558.3 167.6 559.1 175.7 555L320.1 481.6L464.4 555C472.4 559.1 482.1 558.3 489.4 553C496.7 547.7 500.4 538.8 499 529.8L473.7 369.9L588.1 255.4C594.5 249 596.7 239.6 593.9 231C591.1 222.4 583.8 216.1 574.8 214.7L415 189.3L341.5 45.1z"/></svg>
+    <div [ngClass]="getStackClass(getChipsAtPosition(35))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(35)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+
+  <div class="oneBlock p40 green-begin" (click)="onPositionClick(40)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(40))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(40)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock green-path cp1" (click)="onPositionClick(66)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(66))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(66)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p36" (click)="onPositionClick(36)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(36))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(36)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p39" (click)="onPositionClick(39)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(39))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(39)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p38 green-arrow" (click)="onPositionClick(38)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M403.7 107.1C392.1 96 375 92.9 360.3 99.2C345.6 105.5 336 120 336 136L336 272.3L163.7 107.2C152.1 96 135 92.9 120.3 99.2C105.6 105.5 96 120 96 136L96 504C96 520 105.6 534.5 120.3 540.8C135 547.1 152.1 544 163.7 532.9L336 367.7L336 504C336 520 345.6 534.5 360.3 540.8C375 547.1 392.1 544 403.7 532.9L595.7 348.9C603.6 341.4 608 330.9 608 320C608 309.1 603.5 298.7 595.7 291.1L403.7 107.1z"/></svg>
+    <div [ngClass]="getStackClass(getChipsAtPosition(38))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(38)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
+  <div class="oneBlock p37" (click)="onPositionClick(37)">
+    <div [ngClass]="getStackClass(getChipsAtPosition(37))">
+      <app-chip
+        *ngFor="let chip of getChipsAtPosition(37)"
+        [color]="chip.color"
+        [selected]="chip.selected"
+        (click)="onChipClick(chip); $event.stopPropagation()">
+      </app-chip>
+    </div>
+  </div>
 
   <div class="end-zone">
     <div class="end green">
-      <div class="end-pawn ep1"></div>
-      <div class="end-pawn ep2"></div>
-      <div class="end-pawn ep3"></div>
-      <div class="end-pawn ep4"></div>
+      <div class="end-pawn ep1" *ngFor="let chip of getChipsInEndZone('green'); let i = index">
+        <app-chip
+          [color]="chip.color"
+          [selected]="chip.selected"
+          (click)="onChipClick(chip)">
+        </app-chip>
+      </div>
     </div>
     <div class="end blue">
-      <div class="end-pawn ep1">
-        <app-chip color="blue"></app-chip>
+      <div class="end-pawn ep1" *ngFor="let chip of getChipsInEndZone('blue'); let i = index">
+        <app-chip
+          [color]="chip.color"
+          [selected]="chip.selected"
+          (click)="onChipClick(chip)">
+        </app-chip>
       </div>
-      <div class="end-pawn ep2"></div>
-      <div class="end-pawn ep3"></div>
-      <div class="end-pawn ep4"></div>
     </div>
     <div class="end red">
-      <div class="end-pawn ep1"></div>
-      <div class="end-pawn ep2"></div>
-      <div class="end-pawn ep3"></div>
-      <div class="end-pawn ep4"></div>
+      <div class="end-pawn ep1" *ngFor="let chip of getChipsInEndZone('red'); let i = index">
+        <app-chip
+          [color]="chip.color"
+          [selected]="chip.selected"
+          (click)="onChipClick(chip)">
+        </app-chip>
+      </div>
     </div>
     <div class="end yellow">
-      <div class="end-pawn ep1"></div>
-      <div class="end-pawn ep2"></div>
-      <div class="end-pawn ep3"></div>
-      <div class="end-pawn ep4"></div>
+      <div class="end-pawn ep1" *ngFor="let chip of getChipsInEndZone('yellow'); let i = index">
+        <app-chip
+          [color]="chip.color"
+          [selected]="chip.selected"
+          (click)="onChipClick(chip)">
+        </app-chip>
+      </div>
     </div>
   </div>
 </div>
