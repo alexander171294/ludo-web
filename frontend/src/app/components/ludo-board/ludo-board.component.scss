@@ -262,6 +262,18 @@
   }
 }
 
+.stack {
+  &.over {
+    margin-right: -10px;
+  }
+  &.last {
+    margin-left: -37px;
+  }
+  app-chip:not(:first-child) {
+    margin-top: -10px;
+    display: block;
+  }
+}
 // Ruta del juego (camino principal) - estilos específicos se pueden agregar aquí si es necesario
 
 // Estilos adicionales para el camino central - removidos los colores naranjas
