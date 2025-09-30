@@ -3,24 +3,32 @@
   <!-- Fila superior de jugadores -->
   <div class="players-row top-row">
     <!-- Jugador Rojo (izquierda) -->
-    <div class="player-section red-player" [style.opacity]="redPlayerExists ? '1' : '0'">
+    <div class="player-section red-player"
+         [style.opacity]="redPlayerExists ? '1' : '0'"
+         [class.your-turn]="isPlayerTurn('red')">
       <div class="player-info">
         <h3 class="player-name">{{ getPlayerName('red') }}</h3>
         <div class="time-bar-container">
           <div class="time-bar" [style.background-color]="getPlayerColor('red')">
-            <div class="time-progress" [style.width.%]="getPlayerTimeRemaining('red')"></div>
+            <div class="time-progress"
+                 [style.width.%]="getPlayerTimeRemaining('red')"
+                 [style.transition]="'width 0.5s ease-in-out'"></div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Jugador Azul (derecha) -->
-    <div class="player-section blue-player" [style.opacity]="bluePlayerExists ? '1' : '0'">
+    <div class="player-section blue-player"
+         [style.opacity]="bluePlayerExists ? '1' : '0'"
+         [class.your-turn]="isPlayerTurn('blue')">
       <div class="player-info">
         <h3 class="player-name">{{ getPlayerName('blue') }}</h3>
         <div class="time-bar-container">
           <div class="time-bar" [style.background-color]="getPlayerColor('blue')">
-            <div class="time-progress" [style.width.%]="getPlayerTimeRemaining('blue')"></div>
+            <div class="time-progress"
+                 [style.width.%]="getPlayerTimeRemaining('blue')"
+                 [style.transition]="'width 0.5s ease-in-out'"></div>
           </div>
         </div>
       </div>
@@ -60,24 +68,32 @@
   <!-- Fila inferior de jugadores -->
   <div class="players-row bottom-row">
     <!-- Jugador Verde (izquierda) -->
-    <div class="player-section green-player" [style.opacity]="greenPlayerExists ? '1' : '0'">
+    <div class="player-section green-player"
+         [style.opacity]="greenPlayerExists ? '1' : '0'"
+         [class.your-turn]="isPlayerTurn('green')">
       <div class="player-info">
         <h3 class="player-name">{{ getPlayerName('green') }}</h3>
         <div class="time-bar-container">
           <div class="time-bar" [style.background-color]="getPlayerColor('green')">
-            <div class="time-progress" [style.width.%]="getPlayerTimeRemaining('green')"></div>
+            <div class="time-progress"
+                 [style.width.%]="getPlayerTimeRemaining('green')"
+                 [style.transition]="'width 0.5s ease-in-out'"></div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Jugador Amarillo (derecha) -->
-    <div class="player-section yellow-player" [style.opacity]="yellowPlayerExists ? '1' : '0'">
+    <div class="player-section yellow-player"
+         [style.opacity]="yellowPlayerExists ? '1' : '0'"
+         [class.your-turn]="isPlayerTurn('yellow')">
       <div class="player-info">
         <h3 class="player-name">{{ getPlayerName('yellow') }}</h3>
         <div class="time-bar-container">
           <div class="time-bar" [style.background-color]="getPlayerColor('yellow')">
-            <div class="time-progress" [style.width.%]="getPlayerTimeRemaining('yellow')"></div>
+            <div class="time-progress"
+                 [style.width.%]="getPlayerTimeRemaining('yellow')"
+                 [style.transition]="'width 0.5s ease-in-out'"></div>
           </div>
         </div>
       </div>

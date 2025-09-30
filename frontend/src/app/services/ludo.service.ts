@@ -34,6 +34,8 @@ export interface Player {
   name: string;
   color: string;
   pieces: Piece[];
+  actionTimeLeft?: number;
+  action?: string;
 }
 
 export interface RoomInfo {

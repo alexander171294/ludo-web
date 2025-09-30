@@ -207,8 +207,13 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   }
 
   getPlayerTimeRemaining(color: string): number {
-    // Por ahora siempre retornamos 0 como solicitaste
-    return 0;
+    const player = this.getPlayerByColor(color);
+    return player?.actionTimeLeft || 0;
+  }
+
+  isPlayerTurn(color: string): boolean {
+    const player = this.getPlayerByColor(color);
+    return player?.action === 'roll_dice' || false;
   }
 
   goBack() {
