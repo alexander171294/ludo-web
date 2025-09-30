@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param } from '@nestjs/common';
 import { LudoService, RoomInfo } from './ludo.service';
 
 interface JoinGameDto {
@@ -20,7 +20,7 @@ interface JoinRoomResponse {
 
 @Controller('ludo')
 export class LudoController {
-  constructor(private readonly ludoService: LudoService) { }
+  constructor(private readonly ludoService: LudoService) {}
 
   @Post('create-room')
   createRoom(): CreateRoomResponse {
@@ -67,4 +67,11 @@ export class LudoController {
       colors: roomInfo.availableColors,
     };
   }
+
+  // NOTA: Las acciones del juego (roll-dice, select-piece, move-piece, start-game)
+  // se manejan a través de WebSockets usando boardgame.io, NO por REST.
+  // Para usar el juego correctamente:
+  // 1. Conectar via WebSocket a ws://localhost:3000/api
+  // 2. Usar client.moves.rollDice(), client.moves.selectPiece(), etc.
+  // 3. El estado del juego se sincroniza automáticamente entre todos los jugadores
 }

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliente Ludo - boardgame.io</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        input, button, select {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        .game-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .player {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 2px;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+        }
+        .red { background-color: #dc3545; }
+        .blue { background-color: #007bff; }
+        .yellow { background-color: #ffc107; color: #000; }
+        .green { background-color: #28a745; }
+        .piece {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 2px;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            border: 2px solid #333;
+        }
+        .dice {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 2px solid #333;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 10px;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            gap: 2px;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .board-cell {
+            aspect-ratio: 1;
+            border: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            background-color: #fff;
+        }
+        .board-cell.safe { background-color: #ffeb3b; }
+        .board-cell.start-red { background-color: #ffcdd2; }
+        .board-cell.start-blue { background-color: #bbdefb; }
+        .board-cell.start-yellow { background-color: #fff9c4; }
+        .board-cell.start-green { background-color: #c8e6c9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 Cliente Ludo - boardgame.io</h1>
+        
+        <!-- Configuración de Conexión -->
+        <div class="section">
+            <h3>1. Configuración</h3>
+            <input type="text" id="playerNameInput" placeholder="Tu nombre" value="Jugador1">
+            <select id="colorSelect">
+                <option value="red">Rojo</option>
+                <option value="blue">Azul</option>
+                <option value="yellow">Amarillo</option>
+                <option value="green">Verde</option>
+            </select>
+            <input type="text" id="roomIdInput" placeholder="ID de la sala">
+            <button onclick="connectToGame()">Conectar al Juego</button>
+            <div id="connectionStatus"></div>
+        </div>
+
+        <!-- Estado del Juego -->
+        <div class="section">
+            <h3>2. Estado del Juego</h3>
+            <div id="gameState"></div>
+        </div>
+
+        <!-- Acciones del Juego -->
+        <div class="section">
+            <h3>3. Acciones</h3>
+            <button id="rollDiceBtn" onclick="rollDice()" disabled>Lanzar Dado</button>
+            <button id="startGameBtn" onclick="startGame()" disabled>Iniciar Juego</button>
+            <button id="setReadyBtn" onclick="setReady()" disabled>Marcar como Listo</button>
+            <div id="diceResult"></div>
+        </div>
+
+        <!-- Selección de Piezas -->
+        <div class="section">
+            <h3>4. Seleccionar Pieza</h3>
+            <div id="pieceSelection"></div>
+        </div>
+
+        <!-- Tablero del Juego -->
+        <div class="section">
+            <h3>5. Tablero</h3>
+            <div id="gameBoard"></div>
+        </div>
+    </div>
+
+    <!-- Incluir boardgame.io desde CDN -->
+    <script src="https://unpkg.com/boardgame.io@0.50.2/dist/umd.js"></script>
+    
+    <script>
+        // Variables globales
+        let client = null;
+        let gameState = null;
+        let currentPlayer = null;
+
+        // Configuración del juego (simplificada para el ejemplo)
+        const LudoGame = {
+            name: 'ludo',
+            setup: () => ({
+                players: [],
+                currentPlayer: 0,
+                diceValue: 0,
+                gamePhase: 'waiting',
+                winner: null,
+                gameStarted: false,
+                availableColors: ['red', 'blue', 'yellow', 'green'],
+                canRollDice: false,
+                canMovePiece: false,
+                selectedPieceId: undefined,
+            }),
+            moves: {
+                joinGame: ({ G, playerID }, playerData) => {
+                    if (G.gamePhase !== 'waiting') return;
+                    if (G.players.length >= 4) return;
+                    if (!G.availableColors.includes(playerData.color)) return;
+
+                    const player = {
+                        id: playerID,
+                        name: playerData.name,
+                        color: playerData.color,
+                        pieces: Array.from({ length: 4 }, (_, i) => ({
+                            id: i,
+                            position: `sp${i + 1}`,
+                            isInStartZone: true,
+                            isInBoard: false,
+                            isInColorPath: false,
+                            isInEndPath: false,
+                        })),
+                        isReady: false,
+                    };
+
+                    G.players.push(player);
+                    G.availableColors = G.availableColors.filter(c => c !== playerData.color);
+                },
+                setReady: ({ G, playerID }, isReady) => {
+                    const player = G.players.find(p => p.id === playerID);
+                    if (player) player.isReady = isReady;
+                },
+                startGame: ({ G }) => {
+                    if (G.gamePhase !== 'waiting') return;
+                    if (G.players.length < 2) return;
+                    if (!G.players.every(p => p.isReady)) return;
+
+                    G.gamePhase = 'playing';
+                    G.gameStarted = true;
+                    G.currentPlayer = 0;
+                    G.canRollDice = true;
+                },
+                rollDice: ({ G, playerID }) => {
+                    if (G.gamePhase !== 'playing') return;
+                    if (!G.canRollDice) return;
+
+                    G.diceValue = Math.floor(Math.random() * 6) + 1;
+                    G.canRollDice = false;
+                    G.canMovePiece = true;
+                },
+                selectPiece: ({ G, playerID }, pieceId) => {
+                    if (G.gamePhase !== 'playing') return;
+                    if (!G.canMovePiece) return;
+
+                    G.selectedPieceId = pieceId;
+                },
+                movePiece: ({ G, playerID }) => {
+                    if (G.gamePhase !== 'playing') return;
+                    if (!G.canMovePiece || G.selectedPieceId === undefined) return;
+
+                    // Lógica de movimiento simplificada
+                    const player = G.players.find(p => p.id === playerID);
+                    if (player) {
+                        const piece = player.pieces.find(p => p.id === G.selectedPieceId);
+                        if (piece) {
+                            // Simular movimiento
+                            piece.position = `p${Math.floor(Math.random() * 52)}`;
+                        }
+                    }
+
+                    G.canMovePiece = false;
+                    G.selectedPieceId = undefined;
+                    G.currentPlayer = (G.currentPlayer + 1) % G.players.length;
+                    G.canRollDice = true;
+                }
+            }
+        };
+
+        function showStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function connectToGame() {
+            const playerName = document.getElementById('playerNameInput').value;
+            const color = document.getElementById('colorSelect').value;
+            const roomId = document.getElementById('roomIdInput').value;
+
+            if (!playerName || !roomId) {
+                showStatus('connectionStatus', 'Por favor completa todos los campos', 'error');
+                return;
+            }
+
+            try {
+                // Crear cliente de boardgame.io
+                client = boardgameio.Client({
+                    game: LudoGame,
+                    multiplayer: { server: 'http://localhost:3000/api' }
+                });
+
+                // Configurar eventos
+                client.subscribe((state) => {
+                    gameState = state;
+                    updateGameDisplay();
+                });
+
+                // Iniciar cliente
+                client.start();
+
+                // Unirse a la sala
+                client.multiplayer.join(roomId, `player_${Date.now()}`);
+
+                // Enviar datos del jugador
+                client.moves.joinGame({
+                    name: playerName,
+                    color: color
+                });
+
+                showStatus('connectionStatus', 'Conectado al juego', 'success');
+                document.getElementById('setReadyBtn').disabled = false;
+
+            } catch (error) {
+                showStatus('connectionStatus', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function setReady() {
+            if (client) {
+                client.moves.setReady(true);
+                showStatus('connectionStatus', 'Marcado como listo', 'success');
+                document.getElementById('startGameBtn').disabled = false;
+            }
+        }
+
+        function startGame() {
+            if (client) {
+                client.moves.startGame();
+                showStatus('connectionStatus', 'Juego iniciado', 'success');
+                document.getElementById('rollDiceBtn').disabled = false;
+            }
+        }
+
+        function rollDice() {
+            if (client) {
+                client.moves.rollDice();
+            }
+        }
+
+        function selectPiece(pieceId) {
+            if (client) {
+                client.moves.selectPiece(pieceId);
+                client.moves.movePiece();
+            }
+        }
+
+        function updateGameDisplay() {
+            if (!gameState) return;
+
+            // Actualizar estado del juego
+            let gameInfo = `
+                <div class="game-info">
+                    <h4>Estado: ${gameState.gamePhase}</h4>
+                    <p>Jugador actual: ${gameState.currentPlayer}</p>
+                    <p>Dado: ${gameState.diceValue || 'No lanzado'}</p>
+                    <p>Puede lanzar dado: ${gameState.canRollDice ? 'Sí' : 'No'}</p>
+                    <p>Puede mover pieza: ${gameState.canMovePiece ? 'Sí' : 'No'}</p>
+                </div>
+            `;
+
+            // Mostrar jugadores
+            if (gameState.players) {
+                gameInfo += '<h4>Jugadores:</h4>';
+                gameState.players.forEach((player, index) => {
+                    gameInfo += `
+                        <div class="player ${player.color}">
+                            ${player.name} (${player.color}) ${player.isReady ? '✓' : '○'}
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('gameState').innerHTML = gameInfo;
+
+            // Actualizar dado
+            if (gameState.diceValue) {
+                document.getElementById('diceResult').innerHTML = `
+                    <div class="dice">🎲 ${gameState.diceValue}</div>
+                `;
+            }
+
+            // Actualizar botones
+            document.getElementById('rollDiceBtn').disabled = !gameState.canRollDice;
+            document.getElementById('setReadyBtn').disabled = gameState.gamePhase !== 'waiting';
+            document.getElementById('startGameBtn').disabled = gameState.gamePhase !== 'waiting';
+
+            // Mostrar selección de piezas si es necesario
+            if (gameState.canMovePiece && gameState.players) {
+                const currentPlayer = gameState.players[gameState.currentPlayer];
+                if (currentPlayer && currentPlayer.pieces) {
+                    let pieceSelection = '<h4>Selecciona una pieza:</h4>';
+                    currentPlayer.pieces.forEach((piece, index) => {
+                        pieceSelection += `
+                            <button onclick="selectPiece(${piece.id})" class="piece ${currentPlayer.color}">
+                                ${piece.id + 1}
+                            </button>
+                        `;
+                    });
+                    document.getElementById('pieceSelection').innerHTML = pieceSelection;
+                }
+            }
+        }
+
+        // Crear tablero visual
+        function createGameBoard() {
+            const board = document.getElementById('gameBoard');
+            let boardHTML = '<div class="game-board">';
+            
+            // Crear 52 casillas del tablero
+            for (let i = 0; i < 52; i++) {
+                let cellClass = 'board-cell';
+                
+                // Posiciones especiales
+                if ([0, 8, 13, 21, 26, 34, 39, 47].includes(i)) {
+                    cellClass += ' safe';
+                }
+                if (i === 0) cellClass += ' start-red';
+                if (i === 13) cellClass += ' start-blue';
+                if (i === 26) cellClass += ' start-yellow';
+                if (i === 39) cellClass += ' start-green';
+                
+                boardHTML += `<div class="${cellClass}">${i}</div>`;
+            }
+            
+            boardHTML += '</div>';
+            board.innerHTML = boardHTML;
+        }
+
+        // Inicializar tablero al cargar la página
+        window.onload = function() {
+            createGameBoard();
+        };
+    </script>
+</body>
+</html>

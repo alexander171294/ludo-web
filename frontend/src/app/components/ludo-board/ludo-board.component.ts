@@ -37,10 +37,10 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
     this.currentPosition = 0;
 
     this.debugTimer = setInterval(() => {
-      // Remover la clase star-path de la posición anterior
+      // Remover la clase demo-path de la posición anterior
       this.removeStarPathFromPrevious();
 
-      // Agregar la clase star-path a la posición actual
+      // Agregar la clase demo-path a la posición actual
       this.addStarPathToCurrent();
 
       // Avanzar a la siguiente posición (0-51 y vuelve a 0)
@@ -60,7 +60,7 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
   private addStarPathToCurrent() {
     const element = document.querySelector(`.p${this.currentPosition}`);
     if (element) {
-      element.classList.add('star-path');
+      element.classList.add('demo-path');
     }
   }
 
@@ -68,16 +68,16 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
     const previousPosition = this.currentPosition === 0 ? 51 : this.currentPosition - 1;
     const element = document.querySelector(`.p${previousPosition}`);
     if (element) {
-      element.classList.remove('star-path');
+      element.classList.remove('demo-path');
     }
   }
 
   private removeAllStarPaths() {
-    // Remover la clase star-path de todos los elementos
+    // Remover la clase demo-path de todos los elementos
     for (let i = 0; i < 52; i++) {
       const element = document.querySelector(`.p${i}`);
       if (element) {
-        element.classList.remove('star-path');
+        element.classList.remove('demo-path');
       }
     }
   }
@@ -102,10 +102,10 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
     this.currentSpecialNumber = 1;
 
     this.specialDebugTimer = setInterval(() => {
-      // Remover la clase star-path de todos los números especiales anteriores
+      // Remover la clase demo-path de todos los números especiales anteriores
       this.removeStarPathFromAllSpecialNumbers();
 
-      // Agregar la clase star-path a todos los números especiales actuales
+      // Agregar la clase demo-path a todos los números especiales actuales
       this.addStarPathToCurrentSpecialNumbers();
 
       // Avanzar al siguiente número (1-5 y vuelve a 1)
@@ -123,22 +123,22 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
   }
 
   private addStarPathToCurrentSpecialNumbers() {
-    // Agregar star-path a todos los colores con el número actual
+    // Agregar demo-path a todos los colores con el número actual
     this.colors.forEach(color => {
-      const element = document.querySelector(`.${color}${this.currentSpecialNumber}`);
+      const element = document.querySelector(`.${color}-path.cp${this.currentSpecialNumber}`);
       if (element) {
-        element.classList.add('star-path');
+        element.classList.add('demo-path');
       }
     });
   }
 
   private removeStarPathFromAllSpecialNumbers() {
-    // Remover star-path de todos los números especiales (1-5) de todos los colores
+    // Remover demo-path de todos los números especiales (1-5) de todos los colores
     this.colors.forEach(color => {
       for (let i = 1; i <= 5; i++) {
-        const element = document.querySelector(`.${color}${i}`);
+        const element = document.querySelector(`.${color}-path.cp${i}`);
         if (element) {
-          element.classList.remove('star-path');
+          element.classList.remove('demo-path');
         }
       }
     });
