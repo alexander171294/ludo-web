@@ -132,6 +132,32 @@
     transform: scale(1.1);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    .pawn-icon {
+      position: relative;
+
+      .unavailable-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+      }
+    }
+
+    .unavailable-text {
+      color: #ff6b6b;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+  }
 }
 
 .nickname-section {
@@ -204,6 +230,17 @@
       transform: none;
     }
   }
+}
+
+.error-message {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 10px 15px;
+  border-radius: 15px;
+  margin-top: 20px;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid rgba(255, 107, 107, 0.3);
 }
 
 // Responsive design

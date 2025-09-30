@@ -23,12 +23,18 @@
       <div
         class="color-option"
         [class.selected]="selectedColor === color.id"
+        [class.disabled]="!isColorAvailable(color.id)"
         (click)="selectColor(color.id)"
       >
         <div class="pawn-icon" [style.background-color]="color.hex">
-
+          @if (!isColorAvailable(color.id)) {
+            <div class="unavailable-overlay">✕</div>
+          }
         </div>
         <span class="color-name">{{ color.name }}</span>
+        @if (!isColorAvailable(color.id)) {
+          <span class="unavailable-text">Ocupado</span>
+        }
       </div>
     }
   </div>
@@ -42,14 +48,21 @@
       [(ngModel)]="playerName"
       class="nickname-input"
       maxlength="15"
+      [disabled]="isLoading"
     >
     <button
       class="join-game-btn"
       (click)="joinGame()"
-      [disabled]="!playerName || playerName.trim().length < 2"
+      [disabled]="!playerName || playerName.trim().length < 2 || isLoading"
     >
-      ¡Jugar!
+      {{ isLoading ? 'Uniéndose...' : '¡Jugar!' }}
     </button>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="error-message">
+      {{ errorMessage }}
     </div>
   }
 </div>

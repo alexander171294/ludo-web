@@ -12,21 +12,26 @@
         placeholder="Ingresa el código de sala"
         [(ngModel)]="roomCode"
         class="room-input"
-        maxlength="6"
+        [disabled]="isLoading"
       >
       <button
         class="join-btn"
         (click)="joinRoom()"
-        [disabled]="!roomCode || roomCode.length < 4"
+        [disabled]="!roomCode || roomCode.length < 4 || isLoading"
       >
-        Unirse
+        {{ isLoading ? 'Conectando...' : 'Unirse' }}
       </button>
     </div>
+    @if (errorMessage) {
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>
+    }
   </div>
 
   <div class="create-section">
-    <button class="create-btn" (click)="createRoom()">
-      Crear nueva sala
+    <button class="create-btn" (click)="createRoom()" [disabled]="isLoading">
+      {{ isLoading ? 'Creando...' : 'Crear nueva sala' }}
     </button>
   </div>
 </div>

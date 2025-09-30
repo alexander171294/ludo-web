@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { LudoService } from '../../services/ludo.service';
 
 @Component({
   selector: 'app-home',
@@ -11,10 +12,13 @@ import { FormsModule } from '@angular/forms';
 })
 export class HomeComponent implements OnInit {
   roomCode: string = '';
+  isLoading: boolean = false;
+  errorMessage: string = '';
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private ludoService: LudoService
   ) {}
 
   ngOnInit() {
@@ -28,18 +32,46 @@ export class HomeComponent implements OnInit {
 
   joinRoom() {
     if (this.roomCode && this.roomCode.length >= 4) {
-      // Navegar al selector de colores
-      this.router.navigate(['/color-selector'], {
-        queryParams: { roomCode: this.roomCode }
+      this.isLoading = true;
+      this.errorMessage = '';
+
+      // Verificar que la sala existe
+      this.ludoService.getRoomInfo(this.roomCode).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          if ('error' in response) {
+            this.errorMessage = 'Sala no encontrada';
+          } else {
+            this.router.navigate(['/color-selector'], {
+              queryParams: { roomCode: this.roomCode }
+            });
+          }
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.errorMessage = 'Error al conectar con la sala';
+          console.error('Error:', error);
+        }
       });
     }
   }
 
   createRoom() {
-    // Generar un código de sala aleatorio
-    const newRoomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    this.router.navigate(['/color-selector'], {
-      queryParams: { roomCode: newRoomCode, isHost: true }
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.ludoService.createRoom().subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.router.navigate(['/color-selector'], {
+          queryParams: { roomCode: response.roomId, isHost: true }
+        });
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = 'Error al crear la sala';
+        console.error('Error:', error);
+      }
     });
   }
 }

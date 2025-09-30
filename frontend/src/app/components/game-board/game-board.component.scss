@@ -1,6 +1,6 @@
 .game-board-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: radial-gradient(#346424 20%, #121212 90%);
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -32,6 +32,7 @@
       border-radius: 20px;
       margin: 0;
       font-weight: 600;
+      backdrop-filter: blur(10px);
     }
   }
 }
@@ -99,20 +100,22 @@
 
   .back-btn {
     padding: 15px 30px;
-    background: #FF6B6B;
-    color: white;
-    border: none;
+    background: linear-gradient(312deg, #DFB03E, #DBC48C);
+    color: #9F6026;
+    border: 1px solid #D6D7B2;
+    border-bottom: 1px solid #AC8438;
+    border-top: #B49C69;
     border-radius: 25px;
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    box-shadow: 0 0px 0px 5px rgb(255 255 255 / 46%);
     transition: all 0.3s ease;
 
     &:hover {
-      background: #ff5252;
+      background: linear-gradient(312deg, #DBC48C, #DFB03E);
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+      box-shadow: 0 4px 20px #ff9800a3;
     }
   }
 }
