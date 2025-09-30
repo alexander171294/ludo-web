@@ -22,6 +22,23 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   gameInfo: RoomInfo | null = null;
   private gameStateSubscription?: Subscription;
 
+  // Propiedades computadas para cada color
+  get redPlayerExists(): boolean {
+    return this.playerExists('red');
+  }
+
+  get bluePlayerExists(): boolean {
+    return this.playerExists('blue');
+  }
+
+  get greenPlayerExists(): boolean {
+    return this.playerExists('green');
+  }
+
+  get yellowPlayerExists(): boolean {
+    return this.playerExists('yellow');
+  }
+
   // Referencias a los componentes de dados
   @ViewChild('redDice') redDice!: DiceComponent;
   @ViewChild('blueDice') blueDice!: DiceComponent;
@@ -100,12 +117,14 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   }
 
   loadGameState() {
-    this.ludoService.getRoomInfo(this.roomCode).subscribe({
+    this.ludoService.getRoomInfo(this.roomCode, this.playerId).subscribe({
       next: (response) => {
         if (!('error' in response)) {
           console.log('Estado del juego actualizado:', response);
           console.log('Número de jugadores:', response.players.length);
           console.log('Fase del juego:', response.gamePhase);
+          console.log('Puede lanzar dado:', response.canRollDice);
+          console.log('Puede mover pieza:', response.canMovePiece);
           this.gameInfo = response;
         }
       },
@@ -116,9 +135,20 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   }
 
   onStartGame() {
-    // Aquí se implementaría la lógica para iniciar el juego
+    if (!this.gameInfo) return;
+
     console.log('Iniciando juego...');
-    // TODO: Implementar endpoint para iniciar el juego
+    this.ludoService.startGame(this.gameInfo.gameId).subscribe({
+      next: (response) => {
+        console.log('Juego iniciado:', response);
+        // El estado se actualizará automáticamente con el timer
+        // y el popup desaparecerá cuando gamePhase cambie de 'waiting'
+      },
+      error: (error) => {
+        console.error('Error al iniciar el juego:', error);
+        // Aquí podrías mostrar un mensaje de error al usuario
+      }
+    });
   }
 
   getColorName(): string {
@@ -131,6 +161,33 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
   getPlayerColor(colorKey: string): string {
     return this.colors[colorKey]?.hex || '#000000';
+  }
+
+  getPlayerByColor(color: string) {
+    if (!this.gameInfo) return null;
+    return this.gameInfo.players.find(player => player.color === color);
+  }
+
+  playerExists(color: string): boolean {
+    if (!this.gameInfo) {
+      console.log(`Player ${color} exists: false (no gameInfo)`);
+      return false;
+    }
+
+    const player = this.gameInfo.players.find(p => p.color === color);
+    const exists = player !== undefined && player !== null;
+    console.log(`Player ${color} exists:`, exists, 'player:', player);
+    return exists;
+  }
+
+  getPlayerName(color: string): string {
+    const player = this.getPlayerByColor(color);
+    return player?.name || '';
+  }
+
+  getPlayerTimeRemaining(color: string): number {
+    // Por ahora siempre retornamos 0 como solicitaste
+    return 0;
   }
 
   goBack() {

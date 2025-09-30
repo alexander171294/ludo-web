@@ -172,8 +172,42 @@ GET /ludo/game/{gameId}/players
 
 #### Estado del juego
 ```http
-GET /ludo/game/{gameId}/status
+GET /ludo/game/{gameId}/status?playerId={playerId}
 ```
+
+**Sin playerId (información básica):**
+```json
+{
+  "gamePhase": "playing",
+  "gameStarted": true,
+  "currentPlayer": 0,
+  "diceValue": 4,
+  "winner": null
+}
+```
+
+**Con playerId (información completa del jugador):**
+```json
+{
+  "gamePhase": "playing",
+  "gameStarted": true,
+  "currentPlayer": 0,
+  "diceValue": 4,
+  "winner": null,
+  "isPlayerTurn": true,
+  "canRollDice": true,
+  "canMovePiece": false,
+  "selectedPieceId": null,
+  "playerColor": "red",
+  "playerName": "Jugador 1",
+  "rollingDice": 0,
+  "rollingDiceTimeLeft": 75
+}
+```
+
+**Campos del temporizador de dado:**
+- `rollingDice`: ID del jugador que está lanzando el dado (undefined si nadie está lanzando)
+- `rollingDiceTimeLeft`: Porcentaje de tiempo restante (0-100) solo visible para el jugador que está lanzando
 
 ## Flujo de Juego Típico
 
@@ -203,7 +237,7 @@ curl -X GET http://localhost:3000/ludo/game/{gameId}/rejoin/{playerId}
 curl -X POST http://localhost:3000/ludo/game/{gameId}/start
 ```
 
-### 4. Jugar (turno del jugador actual)
+### 3. Jugar (turno del jugador actual)
 ```bash
 # Lanzar dado
 curl -X POST http://localhost:3000/ludo/game/{gameId}/player/{playerId}/roll-dice
@@ -217,10 +251,13 @@ curl -X POST http://localhost:3000/ludo/game/{gameId}/player/{playerId}/select-p
 curl -X POST http://localhost:3000/ludo/game/{gameId}/player/{playerId}/move-piece
 ```
 
-### 5. Monitorear cambios (Polling)
+### 4. Monitorear cambios (Polling)
 ```bash
-# Verificar estado actual del juego
+# Verificar estado básico del juego (sin información sensible)
 curl http://localhost:3000/ludo/game/{gameId}
+
+# Verificar estado del jugador específico (con información de turno)
+curl "http://localhost:3000/ludo/game/{gameId}/status?playerId={playerId}"
 
 # Ver historial de eventos
 curl http://localhost:3000/ludo/game/{gameId}/events

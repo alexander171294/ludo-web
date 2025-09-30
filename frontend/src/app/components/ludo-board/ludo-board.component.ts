@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChipComponent } from '../chip/chip.component';
+import { RoomInfo, Player, Piece } from '../../services/ludo.service';
 
 interface Chip {
   id: string;
@@ -35,7 +36,9 @@ interface StartSlot {
   templateUrl: './ludo-board.component.html',
   styleUrl: './ludo-board.component.scss'
 })
-export class LudoBoardComponent {
+export class LudoBoardComponent implements OnChanges {
+  @Input() gameInfo: RoomInfo | null = null;
+
   selectedChip: Chip | null = null;
   boardPositions: BoardPosition[] = [];
   colorPositions: ColorPosition[] = [];
@@ -78,6 +81,75 @@ export class LudoBoardComponent {
 
   constructor() {
     this.initializeGame();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['gameInfo'] && this.gameInfo) {
+      this.updateChipsFromGameState();
+    }
+  }
+
+  updateChipsFromGameState() {
+    if (!this.gameInfo) return;
+
+    // Limpiar todas las posiciones
+    this.clearAllPositions();
+
+    // Mapear las piezas de cada jugador
+    this.gameInfo.players.forEach(player => {
+      player.pieces.forEach(piece => {
+        this.placePieceOnBoard(player.color, piece);
+      });
+    });
+  }
+
+  clearAllPositions() {
+    // Limpiar posiciones del tablero
+    this.boardPositions.forEach(pos => pos.chips = []);
+
+    // Limpiar posiciones de colores
+    this.colorPositions.forEach(pos => pos.chips = []);
+
+    // Limpiar slots de inicio
+    Object.keys(this.startSlots).forEach(color => {
+      this.startSlots[color].forEach(slot => slot.chip = null);
+    });
+  }
+
+  placePieceOnBoard(playerColor: string, piece: Piece) {
+    const chip: Chip = {
+      id: `${playerColor}-${piece.id}`,
+      color: playerColor as 'red' | 'blue' | 'green' | 'yellow',
+      position: piece.position,
+      selected: false,
+      isInStartZone: piece.isInStartZone,
+      isInEndZone: piece.isInEndPath,
+      startSlot: piece.id
+    };
+
+    // Determinar dónde colocar la pieza
+    if (piece.isInStartZone) {
+      // Colocar en slot de inicio
+      this.startSlots[playerColor][piece.id].chip = chip;
+    } else if (piece.isInBoard) {
+      // Colocar en el tablero principal
+      const boardPos = this.boardPositions.find(pos => pos.position === parseInt(piece.position));
+      if (boardPos) {
+        boardPos.chips.push(chip);
+      }
+    } else if (piece.isInColorPath) {
+      // Colocar en el camino de color
+      const colorPos = this.colorPositions.find(pos => pos.position === piece.position);
+      if (colorPos) {
+        colorPos.chips.push(chip);
+      }
+    } else if (piece.isInEndPath) {
+      // Colocar en la zona final
+      const endPos = this.colorPositions.find(pos => pos.position === `${playerColor}-end`);
+      if (endPos) {
+        endPos.chips.push(chip);
+      }
+    }
   }
 
   initializeGame() {

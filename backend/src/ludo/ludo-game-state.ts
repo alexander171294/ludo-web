@@ -5,6 +5,10 @@ export interface Player {
   name: string;
   color: string;
   pieces: Piece[];
+  rollingDice?: boolean; // Si está lanzando el dado
+  rollingDiceTimeLeft?: number; // Tiempo restante para lanzar dado (0-100)
+  decisionTimeLeft?: number; // Tiempo restante para tomar decisión (0-100)
+  diceValue?: number; // Valor del dado que obtuvo
 }
 
 export interface Piece {
@@ -31,6 +35,8 @@ export interface LudoGameState {
   canRollDice: boolean;
   canMovePiece: boolean;
   selectedPieceId?: number;
+  decisionStartTime?: Date; // Cuándo empezó el tiempo de decisión
+  decisionDuration: number; // Duración del tiempo de decisión (30000 = 30 segundos)
   lastUpdated: Date;
   version: number; // Para control de versiones en el watchdog
 }
@@ -93,6 +99,8 @@ export class LudoGameStateManager {
       canRollDice: false,
       canMovePiece: false,
       selectedPieceId: undefined,
+      decisionStartTime: undefined,
+      decisionDuration: 30000, // 30 segundos para tomar decisiones
       lastUpdated: new Date(),
       version: 1,
     };
@@ -198,30 +206,23 @@ export class LudoGameStateManager {
       return { success: false, message: 'No puedes lanzar el dado en este momento' };
     }
 
+    // Generar valor del dado inmediatamente
     const diceValue = Math.floor(Math.random() * 6) + 1;
     gameState.diceValue = diceValue;
     gameState.canRollDice = false;
 
-    const availablePieces = this.getAvailablePieces(currentPlayer, diceValue);
+    // Marcar que el jugador está lanzando el dado
+    currentPlayer.rollingDice = true;
+    currentPlayer.diceValue = diceValue;
 
-    if (availablePieces.length === 0) {
-      // No hay piezas que se puedan mover, pasar turno
-      gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
-      gameState.canRollDice = true;
-      gameState.canMovePiece = false;
-    } else if (availablePieces.length === 1) {
-      // Solo una pieza puede moverse, seleccionarla automáticamente
-      gameState.selectedPieceId = availablePieces[0].id;
-      gameState.canMovePiece = true;
-    } else {
-      // Múltiples piezas pueden moverse, esperar selección
-      gameState.canMovePiece = true;
-    }
+    // Iniciar temporizador de decisión
+    gameState.decisionStartTime = new Date();
 
     this.updateGameState(gameId, gameState);
 
     return { success: true, message: 'Dado lanzado', diceValue };
   }
+
 
   // Seleccionar pieza para mover
   selectPiece(gameId: string, playerId: string, pieceId: number): { success: boolean; message: string } {
@@ -254,6 +255,12 @@ export class LudoGameStateManager {
     }
 
     gameState.selectedPieceId = pieceId;
+    
+    // Limpiar estado del jugador
+    currentPlayer.rollingDice = false;
+    currentPlayer.diceValue = undefined;
+    gameState.decisionStartTime = undefined;
+
     this.updateGameState(gameId, gameState);
 
     return { success: true, message: 'Pieza seleccionada' };
@@ -295,6 +302,11 @@ export class LudoGameStateManager {
       return { success: true, message: `¡${currentPlayer.name} ha ganado!` };
     }
 
+    // Limpiar estado del jugador actual
+    currentPlayer.rollingDice = false;
+    currentPlayer.diceValue = undefined;
+    gameState.decisionStartTime = undefined;
+
     // Si sacó 6, puede tirar de nuevo
     if (gameState.diceValue === 6) {
       gameState.canRollDice = true;
@@ -314,7 +326,7 @@ export class LudoGameStateManager {
   }
 
   // Obtener piezas que pueden moverse
-  private getAvailablePieces(player: Player, diceValue: number): Piece[] {
+  public getAvailablePieces(player: Player, diceValue: number): Piece[] {
     return player.pieces.filter(piece => this.canMovePiece(piece, diceValue));
   }
 
@@ -458,6 +470,20 @@ export class LudoGameStateManager {
       game.players.length < 4 && 
       game.gamePhase === 'waiting'
     );
+  }
+
+  // Calcular tiempo restante del temporizador de decisión
+  getDecisionTimeLeft(gameState: LudoGameState): number | undefined {
+    if (!gameState.decisionStartTime) {
+      return undefined;
+    }
+
+    const now = new Date();
+    const elapsed = now.getTime() - gameState.decisionStartTime.getTime();
+    const remaining = Math.max(0, gameState.decisionDuration - elapsed);
+    
+    // Devolver como porcentaje (0-100)
+    return Math.round((remaining / gameState.decisionDuration) * 100);
   }
 
   // Eliminar juego

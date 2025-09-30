@@ -1,4 +1,13 @@
-import { Controller, Post, Get, Body, Param, Put, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Param,
+  Put,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { LudoService } from './ludo.service';
 import { LudoGameState } from './ludo-game-state';
 import { WatchdogEvent } from './ludo-watchdog.service';
@@ -7,7 +16,6 @@ interface JoinGameDto {
   name: string;
   color: string;
 }
-
 
 interface SelectPieceDto {
   pieceId: number;
@@ -40,6 +48,24 @@ interface GameActionResponse {
   diceValue?: number;
 }
 
+interface GameInfoResponse {
+  gameId: string;
+  players: any[];
+  currentPlayer: number;
+  diceValue: number;
+  gamePhase: 'waiting' | 'playing' | 'finished';
+  winner: string | null;
+  gameStarted: boolean;
+  availableColors: string[];
+  decisionDuration: number;
+  lastUpdated: Date;
+  version: number;
+  canRollDice?: boolean;
+  canMovePiece?: boolean;
+  selectedPieceId?: number;
+  decisionTimeLeft?: number;
+}
+
 @Controller('ludo')
 export class LudoController {
   constructor(private readonly ludoService: LudoService) {}
@@ -52,22 +78,109 @@ export class LudoController {
   }
 
   @Get('game/:gameId')
-  getGameInfo(@Param('gameId') gameId: string): LudoGameState | { error: string } {
-    return this.ludoService.getGameInfo(gameId);
+  getGameInfo(
+    @Param('gameId') gameId: string,
+    @Query('playerId') playerId?: string,
+  ): GameInfoResponse | { error: string } {
+    const gameInfo = this.ludoService.getGameInfo(gameId);
+    if ('error' in gameInfo) {
+      return gameInfo;
+    }
+
+    // Si no se proporciona playerId, devolver solo información básica
+    if (!playerId) {
+      return {
+        gameId: gameInfo.gameId,
+        players: gameInfo.players,
+        currentPlayer: gameInfo.currentPlayer,
+        diceValue: gameInfo.diceValue,
+        gamePhase: gameInfo.gamePhase,
+        winner: gameInfo.winner,
+        gameStarted: gameInfo.gameStarted,
+        availableColors: gameInfo.availableColors,
+        decisionDuration: gameInfo.decisionDuration,
+        lastUpdated: gameInfo.lastUpdated,
+        version: gameInfo.version,
+      };
+    }
+
+    // Verificar si el jugador existe en el juego
+    const player = gameInfo.players.find((p) => p.id === playerId);
+    if (!player) {
+      return { error: 'Jugador no encontrado en este juego' };
+    }
+
+    // Verificar si es el turno del jugador
+    const isPlayerTurn =
+      gameInfo.currentPlayer ===
+      gameInfo.players.findIndex((p) => p.id === playerId);
+
+    // Calcular información del temporizador de decisión
+    const decisionTimeLeft = this.ludoService.getDecisionTimeLeft(gameInfo);
+    const isThisPlayerTurn = isPlayerTurn && (gameInfo.canRollDice || gameInfo.canMovePiece);
+
+    return {
+      gameId: gameInfo.gameId,
+      players: gameInfo.players,
+      currentPlayer: gameInfo.currentPlayer,
+      diceValue: gameInfo.diceValue,
+      gamePhase: gameInfo.gamePhase,
+      winner: gameInfo.winner,
+      gameStarted: gameInfo.gameStarted,
+      availableColors: gameInfo.availableColors,
+      canRollDice: isPlayerTurn ? gameInfo.canRollDice : false,
+      canMovePiece: isPlayerTurn ? gameInfo.canMovePiece : false,
+      selectedPieceId: isPlayerTurn ? gameInfo.selectedPieceId : undefined,
+      decisionTimeLeft: isThisPlayerTurn ? decisionTimeLeft : undefined,
+      decisionDuration: gameInfo.decisionDuration,
+      lastUpdated: gameInfo.lastUpdated,
+      version: gameInfo.version,
+    };
   }
 
   @Get('games')
-  getAvailableGames(): LudoGameState[] {
-    return this.ludoService.getAvailableGames();
+  getAvailableGames(): GameInfoResponse[] {
+    const games = this.ludoService.getAvailableGames();
+    // Devolver solo información básica sin campos sensibles
+    return games.map((game) => ({
+      gameId: game.gameId,
+      players: game.players,
+      currentPlayer: game.currentPlayer,
+      diceValue: game.diceValue,
+      gamePhase: game.gamePhase,
+      winner: game.winner,
+      gameStarted: game.gameStarted,
+      availableColors: game.availableColors,
+      decisionDuration: game.decisionDuration,
+      lastUpdated: game.lastUpdated,
+      version: game.version,
+    }));
   }
 
   @Get('games/all')
-  getAllGames(): LudoGameState[] {
-    return this.ludoService.getAllGames();
+  getAllGames(): GameInfoResponse[] {
+    const games = this.ludoService.getAllGames();
+    // Devolver solo información básica sin campos sensibles
+    return games.map((game) => ({
+      gameId: game.gameId,
+      players: game.players,
+      currentPlayer: game.currentPlayer,
+      diceValue: game.diceValue,
+      gamePhase: game.gamePhase,
+      winner: game.winner,
+      gameStarted: game.gameStarted,
+      availableColors: game.availableColors,
+      decisionDuration: game.decisionDuration,
+      lastUpdated: game.lastUpdated,
+      version: game.version,
+    }));
   }
 
   @Delete('game/:gameId')
-  deleteGame(@Param('gameId') gameId: string): { success: boolean; message: string } {
+  deleteGame(@Param('gameId') gameId: string): {
+    success: boolean;
+    message: string;
+  } {
     return this.ludoService.deleteGame(gameId);
   }
 
@@ -93,11 +206,13 @@ export class LudoController {
     return this.ludoService.rejoinGame(gameId, playerId);
   }
 
-
   // ===== ACCIONES DEL JUEGO =====
 
   @Post('game/:gameId/start')
-  startGame(@Param('gameId') gameId: string): { success: boolean; message: string } {
+  startGame(@Param('gameId') gameId: string): {
+    success: boolean;
+    message: string;
+  } {
     return this.ludoService.startGame(gameId);
   }
 
@@ -136,14 +251,14 @@ export class LudoController {
     // Nota: En una implementación real, esto debería manejar WebSockets o Server-Sent Events
     // Por ahora, devolvemos un ID de suscripción para polling
     const subscriptionId = this.ludoService.subscribeToGame(
-      gameId, 
-      playerId, 
+      gameId,
+      playerId,
       (gameState) => {
         // En una implementación real, esto enviaría datos via WebSocket
         console.log(`Estado actualizado para juego ${gameId}:`, gameState);
-      }
+      },
     );
-    
+
     return {
       subscriptionId,
       message: 'Suscripción creada. Usa polling para obtener actualizaciones.',
@@ -151,7 +266,10 @@ export class LudoController {
   }
 
   @Delete('subscription/:subscriptionId')
-  unsubscribeFromGame(@Param('subscriptionId') subscriptionId: string): { success: boolean; message: string } {
+  unsubscribeFromGame(@Param('subscriptionId') subscriptionId: string): {
+    success: boolean;
+    message: string;
+  } {
     const success = this.ludoService.unsubscribeFromGame(subscriptionId);
     return {
       success,
@@ -207,20 +325,59 @@ export class LudoController {
   }
 
   @Get('game/:gameId/status')
-  getGameStatus(@Param('gameId') gameId: string) {
+  getGameStatus(
+    @Param('gameId') gameId: string,
+    @Query('playerId') playerId?: string,
+  ) {
     const gameInfo = this.ludoService.getGameInfo(gameId);
     if ('error' in gameInfo) {
       return { error: 'Juego no encontrado' };
     }
-    return {
+
+    // Si no se proporciona playerId, devolver solo información básica
+    if (!playerId) {
+      return {
+        gamePhase: gameInfo.gamePhase,
+        gameStarted: gameInfo.gameStarted,
+        currentPlayer: gameInfo.currentPlayer,
+        diceValue: gameInfo.diceValue,
+        winner: gameInfo.winner,
+        decisionDuration: gameInfo.decisionDuration,
+      };
+    }
+
+    const baseStatus = {
       gamePhase: gameInfo.gamePhase,
       gameStarted: gameInfo.gameStarted,
       currentPlayer: gameInfo.currentPlayer,
-      canRollDice: gameInfo.canRollDice,
-      canMovePiece: gameInfo.canMovePiece,
-      selectedPieceId: gameInfo.selectedPieceId,
       diceValue: gameInfo.diceValue,
       winner: gameInfo.winner,
+    };
+
+    // Verificar si el jugador existe en el juego
+    const player = gameInfo.players.find((p) => p.id === playerId);
+    if (!player) {
+      return { ...baseStatus, error: 'Jugador no encontrado en este juego' };
+    }
+
+    // Verificar si es el turno del jugador
+    const isPlayerTurn =
+      gameInfo.currentPlayer ===
+      gameInfo.players.findIndex((p) => p.id === playerId);
+
+    // Calcular información del temporizador de decisión
+    const decisionTimeLeft = this.ludoService.getDecisionTimeLeft(gameInfo);
+    const isThisPlayerTurn = isPlayerTurn && (gameInfo.canRollDice || gameInfo.canMovePiece);
+
+    return {
+      ...baseStatus,
+      isPlayerTurn,
+      canRollDice: isPlayerTurn ? gameInfo.canRollDice : false,
+      canMovePiece: isPlayerTurn ? gameInfo.canMovePiece : false,
+      selectedPieceId: isPlayerTurn ? gameInfo.selectedPieceId : undefined,
+      playerColor: player.color,
+      playerName: player.name,
+      decisionTimeLeft: isThisPlayerTurn ? decisionTimeLeft : undefined,
     };
   }
 }

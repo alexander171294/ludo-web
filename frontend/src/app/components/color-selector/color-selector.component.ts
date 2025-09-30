@@ -30,8 +30,8 @@ export class ColorSelectorComponent implements OnInit {
   colors: Color[] = [
     { id: 'red', name: 'Rojo', hex: '#EF422F' },
     { id: 'blue', name: 'Azul', hex: '#2E9DE6' },
+    { id: 'yellow', name: 'Amarillo', hex: '#ECBA11' },
     { id: 'green', name: 'Verde', hex: '#5DBE4D' },
-    { id: 'yellow', name: 'Amarillo', hex: '#ECBA11' }
   ];
 
   constructor(

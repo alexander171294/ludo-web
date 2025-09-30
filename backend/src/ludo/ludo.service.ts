@@ -121,6 +121,11 @@ export class LudoService {
         data: { diceValue: result.diceValue },
         timestamp: new Date(),
       });
+
+      // Programar acción automática si se agota el tiempo de decisión
+      setTimeout(() => {
+        this.handleTimeoutAction(gameId, playerId);
+      }, 30000); // 30 segundos
     }
 
     return result;
@@ -216,5 +221,35 @@ export class LudoService {
   // Limpiar datos antiguos
   cleanupOldData(): void {
     this.watchdogService.cleanupOldData();
+  }
+
+  // Obtener tiempo restante del temporizador de decisión
+  getDecisionTimeLeft(gameState: LudoGameState): number | undefined {
+    return this.gameStateManager.getDecisionTimeLeft(gameState);
+  }
+
+  // Manejar acción automática cuando se agota el tiempo
+  private handleTimeoutAction(gameId: string, playerId: string): void {
+    const gameState = this.gameStateManager.getGameState(gameId);
+    if (!gameState) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayer];
+    if (currentPlayer.id !== playerId) return;
+
+    // Si puede lanzar dado pero no lo ha hecho, lanzarlo automáticamente
+    if (gameState.canRollDice) {
+      this.rollDice(gameId, playerId);
+      return;
+    }
+
+    // Si puede mover pieza pero no ha seleccionado una, seleccionar automáticamente
+    if (gameState.canMovePiece && !gameState.selectedPieceId) {
+      const availablePieces = this.gameStateManager.getAvailablePieces(currentPlayer, gameState.diceValue);
+      if (availablePieces.length > 0) {
+        // Seleccionar la primera pieza disponible
+        const randomPiece = availablePieces[Math.floor(Math.random() * availablePieces.length)];
+        this.selectPiece(gameId, playerId, randomPiece.id);
+      }
+    }
   }
 }
