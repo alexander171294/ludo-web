@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliente de Prueba - Ludo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        input, button, select {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        .room-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .player {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 2px;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+        }
+        .red { background-color: #dc3545; }
+        .blue { background-color: #007bff; }
+        .yellow { background-color: #ffc107; color: #000; }
+        .green { background-color: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 Cliente de Prueba - Ludo</h1>
+        
+        <!-- Crear Sala -->
+        <div class="section">
+            <h3>1. Crear Sala</h3>
+            <button onclick="createRoom()">Crear Nueva Sala</button>
+            <div id="createRoomStatus"></div>
+        </div>
+
+        <!-- Unirse a Sala -->
+        <div class="section">
+            <h3>2. Unirse a Sala</h3>
+            <input type="text" id="roomIdInput" placeholder="ID de la sala">
+            <input type="text" id="playerNameInput" placeholder="Tu nombre">
+            <select id="colorSelect">
+                <option value="red">Rojo</option>
+                <option value="blue">Azul</option>
+                <option value="yellow">Amarillo</option>
+                <option value="green">Verde</option>
+            </select>
+            <button onclick="joinRoom()">Unirse a Sala</button>
+            <div id="joinRoomStatus"></div>
+        </div>
+
+        <!-- Información de Sala -->
+        <div class="section">
+            <h3>3. Información de Sala</h3>
+            <input type="text" id="roomInfoInput" placeholder="ID de la sala">
+            <button onclick="getRoomInfo()">Obtener Info</button>
+            <div id="roomInfo"></div>
+        </div>
+
+        <!-- Salas Disponibles -->
+        <div class="section">
+            <h3>4. Salas Disponibles</h3>
+            <button onclick="getAvailableRooms()">Obtener Salas</button>
+            <div id="availableRooms"></div>
+        </div>
+
+        <!-- Colores Disponibles -->
+        <div class="section">
+            <h3>5. Colores Disponibles</h3>
+            <button onclick="getAvailableColors()">Obtener Colores</button>
+            <div id="availableColors"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/ludo';
+        let currentRoomId = null;
+
+        function showStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        async function createRoom() {
+            try {
+                const response = await fetch(`${API_BASE}/create-room`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.roomId) {
+                    currentRoomId = data.roomId;
+                    showStatus('createRoomStatus', `Sala creada: ${data.roomId}`, 'success');
+                    document.getElementById('roomIdInput').value = data.roomId;
+                    document.getElementById('roomInfoInput').value = data.roomId;
+                } else {
+                    showStatus('createRoomStatus', 'Error al crear sala', 'error');
+                }
+            } catch (error) {
+                showStatus('createRoomStatus', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function joinRoom() {
+            const roomId = document.getElementById('roomIdInput').value;
+            const name = document.getElementById('playerNameInput').value;
+            const color = document.getElementById('colorSelect').value;
+            const playerId = 'player_' + Math.random().toString(36).substr(2, 9);
+
+            if (!roomId || !name) {
+                showStatus('joinRoomStatus', 'Por favor completa todos los campos', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/room/${roomId}/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name,
+                        color,
+                        playerId
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showStatus('joinRoomStatus', data.message, 'success');
+                    currentRoomId = roomId;
+                } else {
+                    showStatus('joinRoomStatus', data.message, 'error');
+                }
+            } catch (error) {
+                showStatus('joinRoomStatus', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function getRoomInfo() {
+            const roomId = document.getElementById('roomInfoInput').value;
+            if (!roomId) {
+                showStatus('roomInfo', 'Por favor ingresa un ID de sala', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/room/${roomId}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    showStatus('roomInfo', data.error, 'error');
+                    return;
+                }
+
+                let html = `
+                    <div class="room-info">
+                        <h4>Sala: ${data.roomId}</h4>
+                        <p><strong>Estado:</strong> ${data.gameStarted ? 'Jugando' : 'Esperando'}</p>
+                        <p><strong>Jugadores:</strong> ${data.players.length}/4</p>
+                        <p><strong>Colores disponibles:</strong> ${data.availableColors.join(', ')}</p>
+                        <div>
+                            <strong>Jugadores en la sala:</strong><br>
+                `;
+
+                data.players.forEach(player => {
+                    html += `<span class="player ${player.color}">${player.name} (${player.color})</span>`;
+                });
+
+                html += '</div></div>';
+                document.getElementById('roomInfo').innerHTML = html;
+            } catch (error) {
+                showStatus('roomInfo', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function getAvailableRooms() {
+            try {
+                const response = await fetch(`${API_BASE}/rooms`);
+                const data = await response.json();
+                
+                let html = '<div class="room-info">';
+                if (data.length === 0) {
+                    html += '<p>No hay salas disponibles</p>';
+                } else {
+                    data.forEach(room => {
+                        html += `
+                            <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                                <strong>Sala:</strong> ${room.roomId}<br>
+                                <strong>Jugadores:</strong> ${room.players.length}/4<br>
+                                <strong>Colores disponibles:</strong> ${room.availableColors.join(', ')}
+                            </div>
+                        `;
+                    });
+                }
+                html += '</div>';
+                document.getElementById('availableRooms').innerHTML = html;
+            } catch (error) {
+                showStatus('availableRooms', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function getAvailableColors() {
+            try {
+                const response = await fetch(`${API_BASE}/available-colors`);
+                const data = await response.json();
+                
+                let html = '<div class="room-info">';
+                data.colors.forEach(color => {
+                    html += `<span class="player ${color}">${color}</span>`;
+                });
+                html += '</div>';
+                document.getElementById('availableColors').innerHTML = html;
+            } catch (error) {
+                showStatus('availableColors', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Cargar colores disponibles al cargar la página
+        window.onload = function() {
+            getAvailableColors();
+        };
+    </script>
+</body>
+</html>
