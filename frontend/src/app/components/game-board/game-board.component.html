@@ -1,10 +1,38 @@
 <div class="game-board-container">
-  <div class="game-header">
-    <h1>Tablero de Ludo</h1>
-    <div class="game-info">
-      <p>Sala: {{ roomCode }}</p>
-      <p>Jugador: {{ playerName }}</p>
-      <p>Color: {{ selectedColor }}</p>
+
+  <!-- Fila superior de jugadores -->
+  <div class="players-row top-row">
+    <!-- Jugador Rojo (izquierda) -->
+    <div class="player-section red-player">
+      <div class="player-info">
+        <h3 class="player-name">{{ players.red.name }}</h3>
+        <div class="time-bar-container">
+          <div class="time-bar" [style.background-color]="getPlayerColor('red')">
+            <div class="time-progress" [style.width.%]="players.red.timeRemaining"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Jugador Azul (derecha) -->
+    <div class="player-section blue-player">
+      <div class="player-info">
+        <h3 class="player-name">{{ players.blue.name }}</h3>
+        <div class="time-bar-container">
+          <div class="time-bar" [style.background-color]="getPlayerColor('blue')">
+            <div class="time-progress" [style.width.%]="players.blue.timeRemaining"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dice-rows" style="margin-top: -30px;">
+    <div class="dice-space dice-left">
+      <app-dice [diceType]="'green'" [isRolling]="players.green.isRolling"></app-dice>
+    </div>
+    <div class="dice-space dice-right">
+      <app-dice [diceType]="'green'" [isRolling]="players.green.isRolling"></app-dice>
     </div>
   </div>
 
@@ -12,9 +40,55 @@
     <app-ludo-board></app-ludo-board>
   </div>
 
+  <div class="dice-rows" style="margin-bottom: -30px; z-index: 1;">
+    <div class="dice-space dice-left">
+      <app-dice [diceType]="'green'" [isRolling]="players.green.isRolling"></app-dice>
+    </div>
+    <div class="dice-space dice-right">
+      <app-dice [diceType]="'green'" [isRolling]="players.green.isRolling"></app-dice>
+    </div>
+  </div>
+
+  <!-- Fila inferior de jugadores -->
+  <div class="players-row bottom-row">
+    <!-- Jugador Verde (izquierda) -->
+    <div class="player-section green-player">
+      <div class="player-info">
+        <h3 class="player-name">{{ players.green.name }}</h3>
+        <div class="time-bar-container">
+          <div class="time-bar" [style.background-color]="getPlayerColor('green')">
+            <div class="time-progress" [style.width.%]="players.green.timeRemaining"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Jugador Amarillo (derecha) -->
+    <div class="player-section yellow-player">
+      <div class="player-info">
+        <h3 class="player-name">{{ players.yellow.name }}</h3>
+        <div class="time-bar-container">
+          <div class="time-bar" [style.background-color]="getPlayerColor('yellow')">
+            <div class="time-progress" [style.width.%]="players.yellow.timeRemaining"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fila inferior de dados
+  <div class="dice-row bottom-dice-row">
+    <div class="dice-container green-dice">
+      <app-dice [diceType]="'green'" [isRolling]="players.green.isRolling"></app-dice>
+    </div>
+    <div class="dice-container yellow-dice">
+      <app-dice [diceType]="'yellow'" [isRolling]="players.yellow.isRolling"></app-dice>
+    </div>
+  </div>
+
   <div class="game-actions">
     <button class="back-btn" (click)="goBack()">
       ← Volver
     </button>
-  </div>
+  </div> -->
 </div>

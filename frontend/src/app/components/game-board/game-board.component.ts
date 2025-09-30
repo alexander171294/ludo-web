@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LudoBoardComponent } from '../ludo-board/ludo-board.component';
+import { DiceComponent } from '../dice/dice.component';
 
 @Component({
   selector: 'app-game-board',
   standalone: true,
   templateUrl: './game-board.component.html',
   styleUrls: ['./game-board.component.scss'],
-  imports: [LudoBoardComponent]
+  imports: [LudoBoardComponent, DiceComponent]
 })
 export class GameBoardComponent implements OnInit {
   roomCode: string = '';
@@ -16,10 +17,34 @@ export class GameBoardComponent implements OnInit {
   isHost: boolean = false;
 
   colors: { [key: string]: { name: string; hex: string } } = {
-    'red': { name: 'Rojo', hex: '#FF6B6B' },
-    'blue': { name: 'Azul', hex: '#4ECDC4' },
-    'green': { name: 'Verde', hex: '#45B7D1' },
-    'yellow': { name: 'Amarillo', hex: '#FFA07A' }
+    'red': { name: 'Rojo', hex: '#EF422F' },
+    'blue': { name: 'Azul', hex: '#2E9DE6' },
+    'green': { name: 'Verde', hex: '#5DBE4D' },
+    'yellow': { name: 'Amarillo', hex: '#ECBA11' }
+  };
+
+  // Datos de los jugadores
+  players = {
+    red: {
+      name: 'Jugador Rojo',
+      timeRemaining: 100,
+      isRolling: false
+    },
+    blue: {
+      name: 'Jugador Azul',
+      timeRemaining: 100,
+      isRolling: false
+    },
+    green: {
+      name: 'Jugador Verde',
+      timeRemaining: 100,
+      isRolling: false
+    },
+    yellow: {
+      name: 'Jugador Amarillo',
+      timeRemaining: 100,
+      isRolling: false
+    }
   };
 
   constructor(
@@ -42,6 +67,10 @@ export class GameBoardComponent implements OnInit {
 
   getColorHex(): string {
     return this.colors[this.selectedColor]?.hex || '#000000';
+  }
+
+  getPlayerColor(colorKey: string): string {
+    return this.colors[colorKey]?.hex || '#000000';
   }
 
   goBack() {

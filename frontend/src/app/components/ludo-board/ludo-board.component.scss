@@ -5,13 +5,13 @@
   gap: 2px;
   width: 600px;
   height: 600px;
-  margin: 20px auto;
+  margin: 0px auto;
   background-color: #2c3e50;
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  //transform: scale(0.6);
-  //transform-origin: top center;
+  transform: scale(0.6);
+  transform-origin: top center;
 }
 
 .oneBlock {
