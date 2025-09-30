@@ -88,15 +88,25 @@
 }
 
 .start-zone {
-  grid-column: span 6;
-  grid-row: span 6;
   border-radius: 8px;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(6, 1fr);
-  gap: 2px;
   padding: 5px;
   border: 3px solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .sarea {
+    width: 75%;
+    height: 75%;
+    background: #00000045;
+    border-radius: 8px;
+
+      .start-pawn {
+        background: black;
+        width: 36px;
+        height: 36px;
+      }
+  }
 
   &.red {
     background-color: #EF422F;
