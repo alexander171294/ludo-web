@@ -21,14 +21,23 @@ export interface JoinRoomResponse {
 }
 
 export interface RoomInfo {
-  roomId: string;
+  gameId: string;
   players: Array<{
     id: string;
     name: string;
     color: string;
   }>;
+  currentPlayer: number;
+  diceValue: number;
+  gamePhase: string;
+  winner: string | null;
+  gameStarted: boolean;
   availableColors: string[];
-  isGameStarted: boolean;
+  canRollDice: boolean;
+  canMovePiece: boolean;
+  selectedPieceId: string | null;
+  lastUpdated: string;
+  version: number;
 }
 
 export interface AvailableColorsResponse {
@@ -48,8 +57,8 @@ export class LudoService {
     return this.http.post<CreateRoomResponse>(`${this.apiUrl}/create-game`, {});
   }
 
-  getRoomInfo(roomId: string): Observable<RoomInfo | { error: string }> {
-    return this.http.get<RoomInfo | { error: string }>(`${this.apiUrl}/room/${roomId}`);
+  getRoomInfo(gameId: string): Observable<RoomInfo | { error: string }> {
+    return this.http.get<RoomInfo | { error: string }>(`${this.apiUrl}/game/${gameId}`);
   }
 
   joinRoom(roomId: string, joinData: JoinGameDto): Observable<JoinRoomResponse> {
