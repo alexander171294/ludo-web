@@ -1,0 +1,82 @@
+.popup {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 99;
+  background: #0000008f;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .playerStatus {
+    width: 50vw;
+    height: 50vw;
+    background: #2c3f51;
+    border-radius: 16px;
+    padding: 12px;
+    box-sizing: border-box;
+    .player {
+      width: 49%;
+      height: 49%;
+      display: inline-block;
+      margin: 0.5%;
+      opacity: 0.3;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      vertical-align: top;
+      font-weight: bolder;
+      color: white;
+      font-size: 18px;
+      &.connected {
+        opacity: 1;
+      }
+      &.red {
+        border-radius: 12px 0px 0px 0px;
+        background: #ef432f;
+      }
+      &.blue {
+        border-radius: 0px 12px 0px 0px;
+        background: #2e9de6;
+      }
+      &.green {
+        border-radius: 0px 0px 0px 12px;
+        background: #5dbd4d;
+      }
+      &.yellow {
+        border-radius: 0px 0px 12px 0px;
+        background: #ecba12;
+      }
+    }
+  }
+}
+
+
+button {
+  width: 100%;
+  padding: 15px 20px;
+  background: linear-gradient(312deg, #DFB03E, #DBC48C);
+  color: #9F6026;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0px 0px 5px rgb(255 255 255 / 46%);
+  transition: all 0.3s ease;
+  border: 1px solid #D6D7B2;
+  border-bottom: 1px solid #AC8438;
+  border-top: #B49C69;
+  margin-top: 2vh;
+  &:hover {
+    background: linear-gradient(312deg, #DBC48C, #DFB03E);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px #ff9800a3;
+  }
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+}

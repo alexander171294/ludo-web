@@ -2,13 +2,14 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LudoBoardComponent } from '../ludo-board/ludo-board.component';
 import { DiceComponent } from '../dice/dice.component';
+import { StartGameComponent } from './start-game/start-game.component';
 
 @Component({
   selector: 'app-game-board',
   standalone: true,
   templateUrl: './game-board.component.html',
   styleUrls: ['./game-board.component.scss'],
-  imports: [LudoBoardComponent, DiceComponent]
+  imports: [LudoBoardComponent, DiceComponent, StartGameComponent]
 })
 export class GameBoardComponent implements OnInit {
   roomCode: string = '';
