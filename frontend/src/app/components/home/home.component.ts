@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
       next: (response) => {
         this.isLoading = false;
         this.router.navigate(['/color-selector'], {
-          queryParams: { roomCode: response.roomId, isHost: true }
+          queryParams: { roomCode: response.gameId, isHost: true }
         });
       },
       error: (error) => {

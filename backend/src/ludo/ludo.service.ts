@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { LudoGameStateManager, LudoGameState } from './ludo-game-state';
+import { LudoWatchdogService, WatchdogEvent } from './ludo-watchdog.service';
 
 export interface RoomInfo {
   roomId: string;
@@ -11,78 +13,198 @@ export interface RoomInfo {
 
 @Injectable()
 export class LudoService {
-  private rooms: Map<string, RoomInfo> = new Map();
+  constructor(
+    private gameStateManager: LudoGameStateManager,
+    private watchdogService: LudoWatchdogService,
+  ) {}
 
   // Crear una nueva sala de juego
-  createRoom(): string {
-    const roomId = this.generateRoomId();
+  createGame(): { gameId: string; message: string } {
+    const gameState = this.gameStateManager.createGame();
     
-    // Inicializar información de la sala
-    this.rooms.set(roomId, {
-      roomId,
-      players: [],
-      gameState: null,
-      isFull: false,
-      gameStarted: false,
-      availableColors: ['red', 'blue', 'yellow', 'green']
+    // Registrar evento
+    this.watchdogService.recordEvent({
+      type: 'game_created',
+      gameId: gameState.gameId,
+      data: { gameId: gameState.gameId },
+      timestamp: new Date(),
     });
 
-    return roomId;
+    return {
+      gameId: gameState.gameId,
+      message: 'Juego creado exitosamente',
+    };
   }
 
-  // Obtener información de una sala
-  getRoomInfo(roomId: string): RoomInfo | null {
-    const room = this.rooms.get(roomId);
-    if (!room) return null;
-
-    // Actualizar estado de la sala
-    room.isFull = room.players.length >= 4;
-    room.gameStarted = room.gameState?.gamePhase === 'playing';
-
-    return room;
+  // Obtener información de un juego
+  getGameInfo(gameId: string): LudoGameState | { error: string } {
+    const gameState = this.gameStateManager.getGameState(gameId);
+    if (!gameState) {
+      return { error: 'Juego no encontrado' };
+    }
+    return gameState;
   }
 
-  // Unirse a una sala
-  async joinRoom(roomId: string, playerData: { name: string; color: string; playerId: string }): Promise<{ success: boolean; message: string }> {
-    const room = this.rooms.get(roomId);
-    if (!room) {
-      return { success: false, message: 'Sala no encontrada' };
+  // Unirse a un juego
+  async joinGame(gameId: string, playerData: { name: string; color: string; playerId: string }): Promise<{ success: boolean; message: string }> {
+    const result = this.gameStateManager.joinGame(gameId, playerData);
+    
+    if (result.success) {
+      // Registrar evento
+      this.watchdogService.recordEvent({
+        type: 'player_joined',
+        gameId,
+        playerId: playerData.playerId,
+        data: { playerName: playerData.name, color: playerData.color },
+        timestamp: new Date(),
+      });
     }
 
-    if (room.players.length >= 4) {
-      return { success: false, message: 'La sala está llena' };
-    }
-
-    if (!room.availableColors.includes(playerData.color)) {
-      return { success: false, message: 'Color no disponible' };
-    }
-
-    // Verificar si el jugador ya está en la sala
-    if (room.players.find(p => p.id === playerData.playerId)) {
-      return { success: false, message: 'Ya estás en esta sala' };
-    }
-
-    // Agregar jugador a la sala
-    room.players.push({
-      id: playerData.playerId,
-      name: playerData.name,
-      color: playerData.color,
-      isReady: false
-    });
-
-    // Remover color de disponibles
-    room.availableColors = room.availableColors.filter(c => c !== playerData.color);
-
-    return { success: true, message: 'Te uniste exitosamente a la sala' };
+    return result;
   }
 
-  // Obtener todas las salas disponibles
-  getAvailableRooms(): RoomInfo[] {
-    return Array.from(this.rooms.values()).filter(room => !room.isFull && !room.gameStarted);
+  // Marcar jugador como listo
+  setPlayerReady(gameId: string, playerId: string, isReady: boolean): { success: boolean; message: string } {
+    const result = this.gameStateManager.setPlayerReady(gameId, playerId, isReady);
+    
+    if (result.success) {
+      // Registrar evento
+      this.watchdogService.recordEvent({
+        type: 'player_ready',
+        gameId,
+        playerId,
+        data: { isReady },
+        timestamp: new Date(),
+      });
+    }
+
+    return result;
   }
 
-  // Generar ID único para la sala
-  private generateRoomId(): string {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  // Iniciar el juego
+  startGame(gameId: string): { success: boolean; message: string } {
+    const result = this.gameStateManager.startGame(gameId);
+    
+    if (result.success) {
+      // Registrar evento
+      this.watchdogService.recordEvent({
+        type: 'game_started',
+        gameId,
+        data: { gameId },
+        timestamp: new Date(),
+      });
+    }
+
+    return result;
+  }
+
+  // Lanzar dado
+  rollDice(gameId: string, playerId: string): { success: boolean; message: string; diceValue?: number } {
+    const result = this.gameStateManager.rollDice(gameId, playerId);
+    
+    if (result.success) {
+      // Registrar evento
+      this.watchdogService.recordEvent({
+        type: 'dice_rolled',
+        gameId,
+        playerId,
+        data: { diceValue: result.diceValue },
+        timestamp: new Date(),
+      });
+    }
+
+    return result;
+  }
+
+  // Seleccionar pieza
+  selectPiece(gameId: string, playerId: string, pieceId: number): { success: boolean; message: string } {
+    const result = this.gameStateManager.selectPiece(gameId, playerId, pieceId);
+    
+    if (result.success) {
+      // Registrar evento
+      this.watchdogService.recordEvent({
+        type: 'piece_selected',
+        gameId,
+        playerId,
+        data: { pieceId },
+        timestamp: new Date(),
+      });
+    }
+
+    return result;
+  }
+
+  // Mover ficha
+  movePiece(gameId: string, playerId: string): { success: boolean; message: string } {
+    const result = this.gameStateManager.movePiece(gameId, playerId);
+    
+    if (result.success) {
+      // Registrar evento
+      this.watchdogService.recordEvent({
+        type: 'piece_moved',
+        gameId,
+        playerId,
+        data: { success: true },
+        timestamp: new Date(),
+      });
+
+      // Verificar si el juego terminó
+      const gameState = this.gameStateManager.getGameState(gameId);
+      if (gameState?.gamePhase === 'finished') {
+        this.watchdogService.recordEvent({
+          type: 'game_finished',
+          gameId,
+          playerId: gameState.winner,
+          data: { winner: gameState.winner },
+          timestamp: new Date(),
+        });
+      }
+    }
+
+    return result;
+  }
+
+  // Obtener todos los juegos disponibles
+  getAvailableGames(): LudoGameState[] {
+    return this.gameStateManager.getAvailableGames();
+  }
+
+  // Obtener todos los juegos
+  getAllGames(): LudoGameState[] {
+    return this.gameStateManager.getAllGames();
+  }
+
+  // Eliminar juego
+  deleteGame(gameId: string): { success: boolean; message: string } {
+    const deleted = this.gameStateManager.deleteGame(gameId);
+    return {
+      success: deleted,
+      message: deleted ? 'Juego eliminado exitosamente' : 'Juego no encontrado',
+    };
+  }
+
+  // Suscribirse a cambios en un juego
+  subscribeToGame(gameId: string, playerId: string, callback: (gameState: LudoGameState) => void): string {
+    return this.watchdogService.subscribe(gameId, playerId, callback);
+  }
+
+  // Cancelar suscripción
+  unsubscribeFromGame(subscriptionId: string): boolean {
+    return this.watchdogService.unsubscribe(subscriptionId);
+  }
+
+  // Obtener historial de eventos de un juego
+  getGameEventHistory(gameId: string, limit: number = 50): WatchdogEvent[] {
+    return this.watchdogService.getGameEventHistory(gameId, limit);
+  }
+
+  // Obtener estadísticas del watchdog
+  getWatchdogStats() {
+    return this.watchdogService.getWatchdogStats();
+  }
+
+  // Limpiar datos antiguos
+  cleanupOldData(): void {
+    this.watchdogService.cleanupOldData();
   }
 }

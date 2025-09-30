@@ -18,6 +18,6 @@ async function bootstrap() {
   console.log(
     `🎮 API REST de Ludo: http://localhost:${process.env.PORT ?? 3000}/ludo`,
   );
-  console.log(`🎲 Para usar boardgame.io, ejecuta: pnpm run start:game-server`);
+  console.log(`📊 Watchdog activo para monitorear cambios en las partidas`);
 }
 bootstrap();

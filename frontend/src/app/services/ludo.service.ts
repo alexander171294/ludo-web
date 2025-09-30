@@ -10,7 +10,7 @@ export interface JoinGameDto {
 }
 
 export interface CreateRoomResponse {
-  roomId: string;
+  gameId: string;
   message: string;
 }
 
@@ -45,7 +45,7 @@ export class LudoService {
   constructor(private http: HttpClient) { }
 
   createRoom(): Observable<CreateRoomResponse> {
-    return this.http.post<CreateRoomResponse>(`${this.apiUrl}/create-room`, {});
+    return this.http.post<CreateRoomResponse>(`${this.apiUrl}/create-game`, {});
   }
 
   getRoomInfo(roomId: string): Observable<RoomInfo | { error: string }> {
