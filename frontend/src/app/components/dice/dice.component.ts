@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-dice',
@@ -11,6 +11,8 @@ export class DiceComponent implements OnInit {
   @Input() isRolling: boolean = false;
   @Output() diceRolled = new EventEmitter<number>();
   @Output() rollingStateChanged = new EventEmitter<boolean>();
+
+  @ViewChild('diceElement', { static: true }) diceElementRef!: ElementRef;
 
   diceValue: number = 1;
   isThrowing: boolean = false;
@@ -63,8 +65,8 @@ export class DiceComponent implements OnInit {
    * @param value - Valor del dado (1-6)
    */
   private setDiceValue(value: number) {
-    const diceElement = document.querySelector('.dice') as HTMLElement;
-    if (diceElement) {
+    if (this.diceElementRef && this.diceElementRef.nativeElement) {
+      const diceElement = this.diceElementRef.nativeElement as HTMLElement;
       const rotation = this.perFace[value - 1];
       diceElement.style.transform = `rotate3d(${rotation[0]}, ${rotation[1]}, ${rotation[2]}, 180deg)`;
     }
