@@ -108,10 +108,10 @@
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock blue-path cp1" (click)="onPositionClick(56)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(56))">
+  <div class="oneBlock blue-path cp1" (click)="onPositionClick('blue-cp1')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('blue-cp1'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(56)"
+        *ngFor="let chip of getChipsAtColorPosition('blue-cp1')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -139,10 +139,10 @@
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock blue-path cp2" (click)="onPositionClick(57)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(57))">
+  <div class="oneBlock blue-path cp2" (click)="onPositionClick('blue-cp2')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('blue-cp2'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(57)"
+        *ngFor="let chip of getChipsAtColorPosition('blue-cp2')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -169,10 +169,10 @@
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock blue-path cp3" (click)="onPositionClick(58)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(58))">
+  <div class="oneBlock blue-path cp3" (click)="onPositionClick('blue-cp3')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('blue-cp3'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(58)"
+        *ngFor="let chip of getChipsAtColorPosition('blue-cp3')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -199,10 +199,10 @@
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock blue-path cp4" (click)="onPositionClick(59)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(59))">
+  <div class="oneBlock blue-path cp4" (click)="onPositionClick('blue-cp4')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('blue-cp4'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(59)"
+        *ngFor="let chip of getChipsAtColorPosition('blue-cp4')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -229,10 +229,10 @@
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock blue-path cp5" (click)="onPositionClick(60)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(60))">
+  <div class="oneBlock blue-path cp5" (click)="onPositionClick('blue-cp5')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('blue-cp5'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(60)"
+        *ngFor="let chip of getChipsAtColorPosition('blue-cp5')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -384,50 +384,50 @@
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock red-path cp1" (click)="onPositionClick(51)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(51))">
+  <div class="oneBlock red-path cp1" (click)="onPositionClick('red-cp1')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('red-cp1'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(51)"
+        *ngFor="let chip of getChipsAtColorPosition('red-cp1')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock red-path cp2" (click)="onPositionClick(52)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(52))">
+  <div class="oneBlock red-path cp2" (click)="onPositionClick('red-cp2')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('red-cp2'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(52)"
+        *ngFor="let chip of getChipsAtColorPosition('red-cp2')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock red-path cp3" (click)="onPositionClick(53)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(53))">
+  <div class="oneBlock red-path cp3" (click)="onPositionClick('red-cp3')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('red-cp3'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(53)"
+        *ngFor="let chip of getChipsAtColorPosition('red-cp3')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock red-path cp4" (click)="onPositionClick(54)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(54))">
+  <div class="oneBlock red-path cp4" (click)="onPositionClick('red-cp4')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('red-cp4'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(54)"
+        *ngFor="let chip of getChipsAtColorPosition('red-cp4')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock red-path cp5" (click)="onPositionClick(55)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(55))">
+  <div class="oneBlock red-path cp5" (click)="onPositionClick('red-cp5')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('red-cp5'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(55)"
+        *ngFor="let chip of getChipsAtColorPosition('red-cp5')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -435,50 +435,50 @@
     </div>
   </div>
 
-  <div class="oneBlock yellow-path cp5" (click)="onPositionClick(65)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(65))">
+  <div class="oneBlock yellow-path cp5" (click)="onPositionClick('yellow-cp5')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('yellow-cp5'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(65)"
+        *ngFor="let chip of getChipsAtColorPosition('yellow-cp5')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock yellow-path cp4" (click)="onPositionClick(64)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(64))">
+  <div class="oneBlock yellow-path cp4" (click)="onPositionClick('yellow-cp4')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('yellow-cp4'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(64)"
+        *ngFor="let chip of getChipsAtColorPosition('yellow-cp4')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock yellow-path cp3" (click)="onPositionClick(63)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(63))">
+  <div class="oneBlock yellow-path cp3" (click)="onPositionClick('yellow-cp3')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('yellow-cp3'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(63)"
+        *ngFor="let chip of getChipsAtColorPosition('yellow-cp3')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock yellow-path cp2" (click)="onPositionClick(62)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(62))">
+  <div class="oneBlock yellow-path cp2" (click)="onPositionClick('yellow-cp2')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('yellow-cp2'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(62)"
+        *ngFor="let chip of getChipsAtColorPosition('yellow-cp2')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock yellow-path cp1" (click)="onPositionClick(61)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(61))">
+  <div class="oneBlock yellow-path cp1" (click)="onPositionClick('yellow-cp1')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('yellow-cp1'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(61)"
+        *ngFor="let chip of getChipsAtColorPosition('yellow-cp1')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -630,10 +630,10 @@
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock green-path cp5" (click)="onPositionClick(70)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(70))">
+  <div class="oneBlock green-path cp5" (click)="onPositionClick('green-cp5')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('green-cp5'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(70)"
+        *ngFor="let chip of getChipsAtColorPosition('green-cp5')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -660,10 +660,10 @@
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock green-path cp4" (click)="onPositionClick(69)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(69))">
+  <div class="oneBlock green-path cp4" (click)="onPositionClick('green-cp4')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('green-cp4'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(69)"
+        *ngFor="let chip of getChipsAtColorPosition('green-cp4')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -691,10 +691,10 @@
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock green-path cp3" (click)="onPositionClick(68)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(68))">
+  <div class="oneBlock green-path cp3" (click)="onPositionClick('green-cp3')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('green-cp3'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(68)"
+        *ngFor="let chip of getChipsAtColorPosition('green-cp3')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -721,10 +721,10 @@
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock green-path cp2" (click)="onPositionClick(67)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(67))">
+  <div class="oneBlock green-path cp2" (click)="onPositionClick('green-cp2')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('green-cp2'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(67)"
+        *ngFor="let chip of getChipsAtColorPosition('green-cp2')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -753,10 +753,10 @@
       </app-chip>
     </div>
   </div>
-  <div class="oneBlock green-path cp1" (click)="onPositionClick(66)">
-    <div [ngClass]="getStackClass(getChipsAtPosition(66))">
+  <div class="oneBlock green-path cp1" (click)="onPositionClick('green-cp1')">
+    <div [ngClass]="getStackClass(getChipsAtColorPosition('green-cp1'))">
       <app-chip
-        *ngFor="let chip of getChipsAtPosition(66)"
+        *ngFor="let chip of getChipsAtColorPosition('green-cp1')"
         [color]="chip.color"
         [selected]="chip.selected"
         (click)="onChipClick(chip); $event.stopPropagation()">
@@ -806,39 +806,39 @@
   </div>
 
   <div class="end-zone">
-    <div class="end green">
-      <div class="end-pawn ep1" *ngFor="let chip of getChipsInEndZone('green'); let i = index">
+    <div class="end green" (click)="onPositionClick('green-end')">
+      <div class="end-pawn" [ngClass]="{'ep1': i === 0, 'ep2': i === 1, 'ep3': i === 2, 'ep4': i === 3}" *ngFor="let chip of getChipsInEndZone('green'); let i = index">
         <app-chip
           [color]="chip.color"
           [selected]="chip.selected"
-          (click)="onChipClick(chip)">
+          (click)="onChipClick(chip); $event.stopPropagation()">
         </app-chip>
       </div>
     </div>
-    <div class="end blue">
-      <div class="end-pawn ep1" *ngFor="let chip of getChipsInEndZone('blue'); let i = index">
+    <div class="end blue" (click)="onPositionClick('blue-end')">
+      <div class="end-pawn" [ngClass]="{'ep1': i === 0, 'ep2': i === 1, 'ep3': i === 2, 'ep4': i === 3}" *ngFor="let chip of getChipsInEndZone('blue'); let i = index">
         <app-chip
           [color]="chip.color"
           [selected]="chip.selected"
-          (click)="onChipClick(chip)">
+          (click)="onChipClick(chip); $event.stopPropagation()">
         </app-chip>
       </div>
     </div>
-    <div class="end red">
-      <div class="end-pawn ep1" *ngFor="let chip of getChipsInEndZone('red'); let i = index">
+    <div class="end red" (click)="onPositionClick('red-end')">
+      <div class="end-pawn" [ngClass]="{'ep1': i === 0, 'ep2': i === 1, 'ep3': i === 2, 'ep4': i === 3}" *ngFor="let chip of getChipsInEndZone('red'); let i = index">
         <app-chip
           [color]="chip.color"
           [selected]="chip.selected"
-          (click)="onChipClick(chip)">
+          (click)="onChipClick(chip); $event.stopPropagation()">
         </app-chip>
       </div>
     </div>
-    <div class="end yellow">
-      <div class="end-pawn ep1" *ngFor="let chip of getChipsInEndZone('yellow'); let i = index">
+    <div class="end yellow" (click)="onPositionClick('yellow-end')">
+      <div class="end-pawn" [ngClass]="{'ep1': i === 0, 'ep2': i === 1, 'ep3': i === 2, 'ep4': i === 3}" *ngFor="let chip of getChipsInEndZone('yellow'); let i = index">
         <app-chip
           [color]="chip.color"
           [selected]="chip.selected"
-          (click)="onChipClick(chip)">
+          (click)="onChipClick(chip); $event.stopPropagation()">
         </app-chip>
       </div>
     </div>

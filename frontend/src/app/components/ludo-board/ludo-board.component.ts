@@ -6,7 +6,7 @@ import { ChipComponent } from '../chip/chip.component';
 interface Chip {
   id: string;
   color: 'red' | 'blue' | 'green' | 'yellow';
-  position: number;
+  position: number | string; // puede ser número (tablero) o string (camino especial)
   selected: boolean;
   isInStartZone: boolean;
   isInEndZone: boolean;
@@ -15,6 +15,11 @@ interface Chip {
 
 interface BoardPosition {
   position: number;
+  chips: Chip[];
+}
+
+interface ColorPosition {
+  position: string; // ej: 'red-cp1', 'blue-cp2', etc.
   chips: Chip[];
 }
 
@@ -33,6 +38,7 @@ interface StartSlot {
 export class LudoBoardComponent {
   selectedChip: Chip | null = null;
   boardPositions: BoardPosition[] = [];
+  colorPositions: ColorPosition[] = [];
   chips: Chip[] = [];
   startSlots: { [color: string]: StartSlot[] } = {
     red: [],
@@ -43,10 +49,10 @@ export class LudoBoardComponent {
 
   // Constantes de posiciones
   readonly COLOR_PATH_ENTRY_POSITIONS = {
-    red: 50,
-    blue: 11,
-    yellow: 24,
-    green: 37,
+    red: 51,
+    blue: 12,
+    yellow: 25,
+    green: 38,
   };
 
   readonly START_BOARD_POSITIONS = {
@@ -57,10 +63,17 @@ export class LudoBoardComponent {
   };
 
   readonly COLOR_PATHS = {
-    red: [51, 52, 53, 54, 55], // posiciones del camino rojo (cp1-cp5)
-    blue: [56, 57, 58, 59, 60], // posiciones del camino azul (cp1-cp5)
-    yellow: [61, 62, 63, 64, 65], // posiciones del camino amarillo (cp1-cp5)
-    green: [66, 67, 68, 69, 70], // posiciones del camino verde (cp1-cp5)
+    red: ['red-cp1', 'red-cp2', 'red-cp3', 'red-cp4', 'red-cp5'], // camino rojo
+    blue: ['blue-cp1', 'blue-cp2', 'blue-cp3', 'blue-cp4', 'blue-cp5'], // camino azul
+    yellow: ['yellow-cp1', 'yellow-cp2', 'yellow-cp3', 'yellow-cp4', 'yellow-cp5'], // camino amarillo
+    green: ['green-cp1', 'green-cp2', 'green-cp3', 'green-cp4', 'green-cp5'], // camino verde
+  };
+
+  readonly END_ZONE_POSITIONS = {
+    red: 'red-end',
+    blue: 'blue-end',
+    yellow: 'yellow-end',
+    green: 'green-end',
   };
 
   constructor() {
@@ -68,14 +81,23 @@ export class LudoBoardComponent {
   }
 
   initializeGame() {
-    // Inicializar posiciones del tablero (0-50)
+    // Inicializar posiciones del tablero (0-51)
     for (let i = 0; i <= 51; i++) {
       this.boardPositions.push({ position: i, chips: [] });
     }
 
-    // Inicializar slots de inicio para cada color
+    // Inicializar posiciones de colores (caminos especiales y zonas de end)
     const colors: ('red' | 'blue' | 'green' | 'yellow')[] = ['red', 'blue', 'green', 'yellow'];
+    colors.forEach((color) => {
+      // Agregar posiciones del camino especial (cp1-cp5)
+      for (let i = 1; i <= 5; i++) {
+        this.colorPositions.push({ position: `${color}-cp${i}`, chips: [] });
+      }
+      // Agregar posición de end zone
+      this.colorPositions.push({ position: `${color}-end`, chips: [] });
+    });
 
+    // Inicializar slots de inicio para cada color
     colors.forEach((color) => {
       this.startSlots[color] = [];
       for (let i = 0; i < 4; i++) {
@@ -112,7 +134,7 @@ export class LudoBoardComponent {
     this.selectedChip = chip.selected ? chip : null;
   }
 
-  onPositionClick(position: number) {
+  onPositionClick(position: number | string) {
     if (!this.selectedChip) return;
 
     // Calcular ruta de movimiento
@@ -123,10 +145,10 @@ export class LudoBoardComponent {
     this.moveChipAlongPath(this.selectedChip, path);
   }
 
-  calculatePath(fromPosition: number, toPosition: number): number[] {
+  calculatePath(fromPosition: number | string, toPosition: number | string): (number | string)[] {
     if (fromPosition === toPosition) return [];
 
-    const path: number[] = [];
+    const path: (number | string)[] = [];
     let currentPos = fromPosition;
 
     // Si está en zona de inicio, mover a posición de inicio del tablero
@@ -135,7 +157,52 @@ export class LudoBoardComponent {
       path.push(currentPos);
     }
 
-    // Calcular ruta hasta la posición objetivo
+    // Si el destino es una posición de color y estamos en la posición de entrada
+    if (typeof toPosition === 'string' && typeof fromPosition === 'number' &&
+        fromPosition === this.COLOR_PATH_ENTRY_POSITIONS[this.selectedChip!.color]) {
+      // Si es la zona de end, ir directamente ahí
+      if (toPosition === this.END_ZONE_POSITIONS[this.selectedChip!.color]) {
+        path.push(toPosition);
+        return path;
+      }
+
+      // Si es una posición del camino de color, ir directamente a la primera posición
+      if (this.isInColorPath(toPosition, this.selectedChip!.color)) {
+        path.push(this.COLOR_PATHS[this.selectedChip!.color][0]);
+        currentPos = this.COLOR_PATHS[this.selectedChip!.color][0];
+
+        // Continuar por el camino de color hasta la posición objetivo
+        while (currentPos !== toPosition) {
+          const nextPos = this.getNextPosition(currentPos, this.selectedChip!.color);
+          if (nextPos === -1 || nextPos === currentPos) break; // Evitar bucle infinito
+          currentPos = nextPos;
+          path.push(currentPos);
+        }
+        return path;
+      }
+    }
+
+    // Si el destino es la zona de end y estamos en el camino de color
+    if (typeof toPosition === 'string' && toPosition === this.END_ZONE_POSITIONS[this.selectedChip!.color] &&
+        typeof fromPosition === 'string' && this.isInColorPath(fromPosition, this.selectedChip!.color)) {
+      // Ir directamente a la zona de end
+      path.push(toPosition);
+      return path;
+    }
+
+    // Si el destino es la posición de entrada del color, permitir llegar ahí
+    if (typeof toPosition === 'number' && toPosition === this.COLOR_PATH_ENTRY_POSITIONS[this.selectedChip!.color]) {
+      // Calcular ruta normal hasta la posición de entrada
+      while (currentPos !== toPosition) {
+        const nextPos = this.getNextPosition(currentPos, this.selectedChip!.color);
+        if (nextPos === -1) break; // No se puede avanzar más
+        currentPos = nextPos;
+        path.push(currentPos);
+      }
+      return path;
+    }
+
+    // Calcular ruta normal hasta la posición objetivo
     while (currentPos !== toPosition) {
       currentPos = this.getNextPosition(currentPos, this.selectedChip!.color);
       if (currentPos === -1) break; // No se puede avanzar más
@@ -145,9 +212,9 @@ export class LudoBoardComponent {
     return path;
   }
 
-  getNextPosition(currentPosition: number, color: 'red' | 'blue' | 'green' | 'yellow'): number {
+  getNextPosition(currentPosition: number | string, color: 'red' | 'blue' | 'green' | 'yellow'): number | string {
     // Si está en el camino especial del color
-    if (this.isInColorPath(currentPosition, color)) {
+    if (typeof currentPosition === 'string' && this.isInColorPath(currentPosition, color)) {
       const colorPath = this.COLOR_PATHS[color];
       const currentIndex = colorPath.indexOf(currentPosition);
       if (currentIndex < colorPath.length - 1) {
@@ -156,26 +223,28 @@ export class LudoBoardComponent {
       return -1; // Llegó al final del camino
     }
 
-    // Si está en la posición de entrada al camino especial
-    if (currentPosition === this.COLOR_PATH_ENTRY_POSITIONS[color]) {
-      return this.COLOR_PATHS[color][0];
-    }
-
     // Movimiento normal en el tablero
-    if (currentPosition < 51) {
-      return currentPosition + 1;
-    } else if (currentPosition >= 51) {
-      return 0; // Volver al inicio del tablero
+    if (typeof currentPosition === 'number') {
+      // Si está en la posición de entrada del color, ir al camino de color
+      if (currentPosition === this.COLOR_PATH_ENTRY_POSITIONS[color]) {
+        return this.COLOR_PATHS[color][0]; // Primera posición del camino de color
+      }
+
+      if (currentPosition < 51) {
+        return currentPosition + 1;
+      } else if (currentPosition >= 51) {
+        return 0; // Volver al inicio del tablero
+      }
     }
 
     return -1;
   }
 
-  isInColorPath(position: number, color: 'red' | 'blue' | 'green' | 'yellow'): boolean {
+  isInColorPath(position: string, color: 'red' | 'blue' | 'green' | 'yellow'): boolean {
     return this.COLOR_PATHS[color].includes(position);
   }
 
-  async moveChipAlongPath(chip: Chip, path: number[]) {
+  async moveChipAlongPath(chip: Chip, path: (number | string)[]) {
     for (const position of path) {
       await this.moveChipToPosition(chip, position);
     }
@@ -185,7 +254,7 @@ export class LudoBoardComponent {
     this.selectedChip = null;
   }
 
-  async moveChipToPosition(chip: Chip, newPosition: number): Promise<void> {
+  async moveChipToPosition(chip: Chip, newPosition: number | string): Promise<void> {
     return new Promise(resolve => {
       // Remover ficha de la posición actual
       this.removeChipFromPosition(chip);
@@ -193,7 +262,9 @@ export class LudoBoardComponent {
       // Actualizar posición de la ficha
       chip.position = newPosition;
       chip.isInStartZone = newPosition === -1;
-      chip.isInEndZone = this.isInColorPath(newPosition, chip.color);
+      // Solo marcar como end zone si está en la posición de end específica
+      chip.isInEndZone = typeof newPosition === 'string' &&
+                        newPosition === this.END_ZONE_POSITIONS[chip.color];
 
       // Colocar ficha en nueva posición
       this.placeChipOnBoard(chip, newPosition);
@@ -203,16 +274,25 @@ export class LudoBoardComponent {
     });
   }
 
-  placeChipOnBoard(chip: Chip, position: number) {
+  placeChipOnBoard(chip: Chip, position: number | string) {
     if (position === -1) {
       // Colocar en slot de inicio
       this.startSlots[chip.color][chip.startSlot].chip = chip;
       return;
     }
 
-    const boardPos = this.boardPositions.find(p => p.position === position);
-    if (boardPos) {
-      boardPos.chips.push(chip);
+    if (typeof position === 'number') {
+      // Colocar en posición del tablero
+      const boardPos = this.boardPositions.find(p => p.position === position);
+      if (boardPos) {
+        boardPos.chips.push(chip);
+      }
+    } else {
+      // Colocar en posición de color
+      const colorPos = this.colorPositions.find(p => p.position === position);
+      if (colorPos) {
+        colorPos.chips.push(chip);
+      }
     }
   }
 
@@ -223,11 +303,23 @@ export class LudoBoardComponent {
       return;
     }
 
-    const boardPos = this.boardPositions.find(p => p.position === chip.position);
-    if (boardPos) {
-      const index = boardPos.chips.findIndex(c => c.id === chip.id);
-      if (index > -1) {
-        boardPos.chips.splice(index, 1);
+    if (typeof chip.position === 'number') {
+      // Remover de posición del tablero
+      const boardPos = this.boardPositions.find(p => p.position === chip.position);
+      if (boardPos) {
+        const index = boardPos.chips.findIndex(c => c.id === chip.id);
+        if (index > -1) {
+          boardPos.chips.splice(index, 1);
+        }
+      }
+    } else {
+      // Remover de posición de color
+      const colorPos = this.colorPositions.find(p => p.position === chip.position);
+      if (colorPos) {
+        const index = colorPos.chips.findIndex(c => c.id === chip.id);
+        if (index > -1) {
+          colorPos.chips.splice(index, 1);
+        }
       }
     }
   }
@@ -235,6 +327,11 @@ export class LudoBoardComponent {
   getChipsAtPosition(position: number): Chip[] {
     const boardPos = this.boardPositions.find(p => p.position === position);
     return boardPos ? boardPos.chips : [];
+  }
+
+  getChipsAtColorPosition(position: string): Chip[] {
+    const colorPos = this.colorPositions.find(p => p.position === position);
+    return colorPos ? colorPos.chips : [];
   }
 
   getChipsInStartZone(color: 'red' | 'blue' | 'green' | 'yellow'): Chip[] {
