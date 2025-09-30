@@ -9,24 +9,7 @@
   </div>
 
   <div class="board-placeholder">
-    <div class="placeholder-content">
-      <h2>🎲 Tablero en construcción</h2>
-      <p>El tablero de juego se completará próximamente</p>
-      <div class="game-stats">
-        <div class="stat">
-          <span class="stat-label">Sala:</span>
-          <span class="stat-value">{{ roomCode }}</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Tu color:</span>
-          <span class="stat-value" [style.color]="getColorHex()">{{ getColorName() }}</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Jugador:</span>
-          <span class="stat-value">{{ playerName }}</span>
-        </div>
-      </div>
-    </div>
+    <app-ludo-board></app-ludo-board>
   </div>
 
   <div class="game-actions">

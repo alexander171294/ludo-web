@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LudoBoardComponent } from '../ludo-board/ludo-board.component';
 
 @Component({
   selector: 'app-game-board',
   standalone: true,
   templateUrl: './game-board.component.html',
-  styleUrls: ['./game-board.component.scss']
+  styleUrls: ['./game-board.component.scss'],
+  imports: [LudoBoardComponent]
 })
 export class GameBoardComponent implements OnInit {
   roomCode: string = '';
