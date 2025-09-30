@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://your-production-api.com/ludo'
+  apiUrl: 'http://localhost:3000/ludo'
 };

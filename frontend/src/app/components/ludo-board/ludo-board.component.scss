@@ -248,22 +248,75 @@
   }
 }
 
-// Ruta del juego (camino principal)
-.oneBlock:nth-child(n+1):nth-child(-n+15) {
-  // Primera fila - camino horizontal superior
-}
-
-.oneBlock:nth-child(15n+1) {
-  // Primera columna - camino vertical izquierdo
-}
-
-.oneBlock:nth-child(15n+15) {
-  // Última columna - camino vertical derecho
-}
-
-.oneBlock:nth-child(n+211):nth-child(-n+225) {
-  // Última fila - camino horizontal inferior
-}
+// Ruta del juego (camino principal) - estilos específicos se pueden agregar aquí si es necesario
 
 // Estilos adicionales para el camino central - removidos los colores naranjas
 // Los bloques del camino mantendrán el color base #ecf0f1
+
+// ========== ESTILOS PARA EL DADO ==========
+
+.dice-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  min-width: 250px;
+}
+
+.dice-controls {
+  margin-top: 15px;
+  text-align: center;
+
+  button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 15px;
+    transition: background 0.3s;
+
+    &:hover:not(:disabled) {
+      background: #2980b9;
+    }
+
+    &:disabled {
+      background: #7f8c8d;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.dice-type-selector {
+  margin-bottom: 15px;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #333;
+  }
+}
+
+.dice-result {
+  background: #27ae60;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 18px;
+  text-align: center;
+}

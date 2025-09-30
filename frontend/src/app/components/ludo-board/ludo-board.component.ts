@@ -1,9 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DiceComponent } from '../dice/dice.component';
 
 @Component({
   selector: 'app-ludo-board',
   standalone: true,
-  imports: [],
+  imports: [DiceComponent, FormsModule, CommonModule],
   templateUrl: './ludo-board.component.html',
   styleUrl: './ludo-board.component.scss'
 })
@@ -16,6 +19,13 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
   private currentSpecialNumber: number = 1;
   private isSpecialDebugActive: boolean = false;
   private colors: string[] = ['blue', 'red', 'yellow', 'green'];
+
+  // Propiedades para el dado
+  diceValue: number = 1;
+  diceType: string = 'default';
+  isDiceRolling: boolean = false;
+
+  @ViewChild(DiceComponent) diceComponent!: DiceComponent;
 
   ngOnInit() {
     // Iniciar automáticamente el debug al cargar el componente
@@ -157,5 +167,50 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
   toggleAllDebug() {
     this.toggleDebug();
     this.toggleSpecialDebug();
+  }
+
+  // ========== MÉTODOS PARA EL DADO ==========
+
+  /**
+   * Simula el lanzamiento del dado con un resultado predefinido
+   * En un juego real, este resultado vendría del backend
+   */
+  rollDice() {
+    // Simular resultado del backend (1-6)
+    const backendResult = Math.floor(Math.random() * 6) + 1;
+
+    // Llamar al método roll del componente dado con el resultado predefinido
+    if (this.diceComponent) {
+      this.diceComponent.roll(backendResult);
+    }
+
+    console.log('Lanzando dado... Resultado del backend:', backendResult);
+  }
+
+  /**
+   * Maneja el evento cuando el dado termina de rodar
+   * @param value - El valor final del dado
+   */
+  onDiceRolled(value: number) {
+    this.diceValue = value;
+    console.log('Dado rodado! Valor:', value);
+    // Aquí puedes agregar la lógica del juego basada en el resultado
+  }
+
+  /**
+   * Maneja el cambio de estado del dado (rodando/parado)
+   * @param isRolling - Si el dado está rodando
+   */
+  onDiceRollingStateChanged(isRolling: boolean) {
+    this.isDiceRolling = isRolling;
+    console.log('Estado del dado:', isRolling ? 'Rodando' : 'Parado');
+  }
+
+  /**
+   * Cambia el tipo de dado
+   * @param type - Tipo de dado (default, red, blue, black, pink)
+   */
+  changeDiceType(type: string) {
+    this.diceType = type;
   }
 }

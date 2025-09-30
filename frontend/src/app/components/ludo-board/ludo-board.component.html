@@ -1,4 +1,35 @@
 <div class="ludo-board">
+  <!-- Componente del dado -->
+  <div class="dice-container">
+    <app-dice
+      [diceType]="diceType"
+      [isRolling]="isDiceRolling"
+      (diceRolled)="onDiceRolled($event)"
+      (rollingStateChanged)="onDiceRollingStateChanged($event)">
+    </app-dice>
+
+    <!-- Controles del dado -->
+    <div class="dice-controls">
+      <button (click)="rollDice()" [disabled]="isDiceRolling">
+        {{ isDiceRolling ? 'Rodando...' : 'Lanzar Dado' }}
+      </button>
+
+      <div class="dice-type-selector">
+        <label>Tipo de dado:</label>
+        <select [(ngModel)]="diceType" (change)="changeDiceType(diceType)">
+          <option value="default">Default</option>
+          <option value="red">Rojo</option>
+          <option value="blue">Azul</option>
+          <option value="black">Negro</option>
+          <option value="pink">Rosa</option>
+        </select>
+      </div>
+
+      <div class="dice-result" *ngIf="diceValue">
+        <span>Resultado: {{ diceValue }}</span>
+      </div>
+    </div>
+  </div>
   <div class="start-zone red six-six">
     <div class="sarea">
       <div class="start-pawn sp1">
@@ -90,7 +121,7 @@
 
   <div class="oneBlock p50"></div>
   <div class="oneBlock p49"></div>
-  <div class="oneBlock p48"></div>
+  <div class="oneBlock p48 star-path"></div>
   <div class="oneBlock p47"></div>
   <div class="oneBlock p46"></div>
   <div class="oneBlock p45"></div>
