@@ -5,7 +5,6 @@ export interface Player {
   name: string;
   color: string;
   pieces: Piece[];
-  isReady: boolean;
 }
 
 export interface Piece {
@@ -144,7 +143,6 @@ export class LudoGameStateManager {
         isInColorPath: false,
         isInEndPath: false,
       })),
-      isReady: false,
     };
 
     gameState.players.push(player);
@@ -154,23 +152,6 @@ export class LudoGameStateManager {
     return { success: true, message: 'Te uniste exitosamente al juego' };
   }
 
-  // Marcar jugador como listo
-  setPlayerReady(gameId: string, playerId: string, isReady: boolean): { success: boolean; message: string } {
-    const gameState = this.gameStates.get(gameId);
-    if (!gameState) {
-      return { success: false, message: 'Juego no encontrado' };
-    }
-
-    const player = gameState.players.find(p => p.id === playerId);
-    if (!player) {
-      return { success: false, message: 'Jugador no encontrado' };
-    }
-
-    player.isReady = isReady;
-    this.updateGameState(gameId, gameState);
-
-    return { success: true, message: isReady ? 'Jugador marcado como listo' : 'Jugador marcado como no listo' };
-  }
 
   // Iniciar el juego
   startGame(gameId: string): { success: boolean; message: string } {
@@ -185,10 +166,6 @@ export class LudoGameStateManager {
 
     if (gameState.players.length < 2) {
       return { success: false, message: 'Se necesitan al menos 2 jugadores' };
-    }
-
-    if (!gameState.players.every(p => p.isReady)) {
-      return { success: false, message: 'Todos los jugadores deben estar listos' };
     }
 
     gameState.gamePhase = 'playing';

@@ -8,9 +8,6 @@ interface JoinGameDto {
   color: string;
 }
 
-interface SetReadyDto {
-  isReady: boolean;
-}
 
 interface SelectPieceDto {
   pieceId: number;
@@ -34,7 +31,6 @@ interface RejoinGameResponse {
   playerData?: {
     name: string;
     color: string;
-    isReady: boolean;
   };
 }
 
@@ -97,14 +93,6 @@ export class LudoController {
     return this.ludoService.rejoinGame(gameId, playerId);
   }
 
-  @Put('game/:gameId/player/:playerId/ready')
-  setPlayerReady(
-    @Param('gameId') gameId: string,
-    @Param('playerId') playerId: string,
-    @Body() readyData: SetReadyDto,
-  ): { success: boolean; message: string } {
-    return this.ludoService.setPlayerReady(gameId, playerId, readyData.isReady);
-  }
 
   // ===== ACCIONES DEL JUEGO =====
 

@@ -69,7 +69,7 @@ export class LudoService {
   }
 
   // Rejoin a un juego existente
-  rejoinGame(gameId: string, playerId: string): { success: boolean; message: string; playerData?: { name: string; color: string; isReady: boolean } } {
+  rejoinGame(gameId: string, playerId: string): { success: boolean; message: string; playerData?: { name: string; color: string } } {
     const gameState = this.gameStateManager.getGameState(gameId);
     if (!gameState) {
       return { success: false, message: 'Juego no encontrado' };
@@ -86,28 +86,10 @@ export class LudoService {
       playerData: {
         name: player.name,
         color: player.color,
-        isReady: player.isReady,
       },
     };
   }
 
-  // Marcar jugador como listo
-  setPlayerReady(gameId: string, playerId: string, isReady: boolean): { success: boolean; message: string } {
-    const result = this.gameStateManager.setPlayerReady(gameId, playerId, isReady);
-    
-    if (result.success) {
-      // Registrar evento
-      this.watchdogService.recordEvent({
-        type: 'player_ready',
-        gameId,
-        playerId,
-        data: { isReady },
-        timestamp: new Date(),
-      });
-    }
-
-    return result;
-  }
 
   // Iniciar el juego
   startGame(gameId: string): { success: boolean; message: string } {

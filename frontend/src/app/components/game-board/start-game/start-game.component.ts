@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RoomInfo } from '../../../services/ludo.service';
 
@@ -9,7 +9,7 @@ import { RoomInfo } from '../../../services/ludo.service';
   templateUrl: './start-game.component.html',
   styleUrl: './start-game.component.scss'
 })
-export class StartGameComponent {
+export class StartGameComponent implements OnChanges {
   @Input() gameInfo: RoomInfo | null = null;
   @Input() isHost: boolean = false;
   @Output() startGame = new EventEmitter<void>();
@@ -22,6 +22,15 @@ export class StartGameComponent {
     yellow: 'Amarillo'
   };
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['gameInfo']) {
+      console.log('GameInfo actualizado:', this.gameInfo);
+      console.log('Número de jugadores:', this.gameInfo?.players.length);
+      console.log('Es host:', this.isHost);
+      console.log('Puede comenzar:', this.canStartGame());
+    }
+  }
+
   getPlayerByColor(color: string) {
     if (!this.gameInfo) return null;
     return this.gameInfo.players.find(player => player.color === color);
@@ -29,7 +38,9 @@ export class StartGameComponent {
 
   canStartGame(): boolean {
     if (!this.gameInfo) return false;
-    return this.gameInfo.players.length >= 2 && this.isHost;
+    const canStart = this.gameInfo.players.length >= 2 && this.isHost;
+    console.log(`canStartGame: players=${this.gameInfo.players.length}, isHost=${this.isHost}, result=${canStart}`);
+    return canStart;
   }
 
   onStartGame() {

@@ -103,6 +103,9 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     this.ludoService.getRoomInfo(this.roomCode).subscribe({
       next: (response) => {
         if (!('error' in response)) {
+          console.log('Estado del juego actualizado:', response);
+          console.log('Número de jugadores:', response.players.length);
+          console.log('Fase del juego:', response.gamePhase);
           this.gameInfo = response;
         }
       },

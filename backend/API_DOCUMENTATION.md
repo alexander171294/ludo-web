@@ -99,19 +99,8 @@ GET /ludo/game/{gameId}/rejoin/{playerId}
   "message": "Rejoin exitoso",
   "playerData": {
     "name": "Nombre del Jugador",
-    "color": "red",
-    "isReady": false
+    "color": "red"
   }
-}
-```
-
-#### Marcar jugador como listo
-```http
-PUT /ludo/game/{gameId}/player/{playerId}/ready
-Content-Type: application/json
-
-{
-  "isReady": true
 }
 ```
 
@@ -209,14 +198,7 @@ curl -X POST http://localhost:3000/ludo/game/{gameId}/join \
 curl -X GET http://localhost:3000/ludo/game/{gameId}/rejoin/{playerId}
 ```
 
-### 2. Marcar jugadores como listos
-```bash
-curl -X PUT http://localhost:3000/ludo/game/{gameId}/player/{playerId}/ready \
-  -H "Content-Type: application/json" \
-  -d '{"isReady": true}'
-```
-
-### 3. Iniciar el juego
+### 2. Iniciar el juego
 ```bash
 curl -X POST http://localhost:3000/ludo/game/{gameId}/start
 ```
