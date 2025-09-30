@@ -1,0 +1,37 @@
+<div class="game-board-container">
+  <div class="game-header">
+    <h1>Tablero de Ludo</h1>
+    <div class="game-info">
+      <p>Sala: {{ roomCode }}</p>
+      <p>Jugador: {{ playerName }}</p>
+      <p>Color: {{ selectedColor }}</p>
+    </div>
+  </div>
+
+  <div class="board-placeholder">
+    <div class="placeholder-content">
+      <h2>🎲 Tablero en construcción</h2>
+      <p>El tablero de juego se completará próximamente</p>
+      <div class="game-stats">
+        <div class="stat">
+          <span class="stat-label">Sala:</span>
+          <span class="stat-value">{{ roomCode }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Tu color:</span>
+          <span class="stat-value" [style.color]="getColorHex()">{{ getColorName() }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Jugador:</span>
+          <span class="stat-value">{{ playerName }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-actions">
+    <button class="back-btn" (click)="goBack()">
+      ← Volver
+    </button>
+  </div>
+</div>
