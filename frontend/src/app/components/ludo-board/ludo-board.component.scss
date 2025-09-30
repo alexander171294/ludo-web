@@ -82,13 +82,14 @@
   }
 
   &.demo-path {
-    background-color: rgb(215 215 215);
     background-color: #00000042;
   }
 
   &.star-path {
     background-color: rgb(215 215 215);
-    background-color: #00000042;
+    svg {
+      fill: gray;
+    }
   }
 
   &:hover {

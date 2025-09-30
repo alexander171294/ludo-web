@@ -59,7 +59,7 @@ const SAFE_POSITIONS = [
   // Posiciones de inicio de cada color
   1, 14, 27, 40,
   // Posiciones estrella (cada 8 casillas)
-  1, 9, 14, 22, 27, 35, 40, 48,
+  9, 22, 35, 48,
 ];
 
 export const LudoGame: Game<LudoState> = {
