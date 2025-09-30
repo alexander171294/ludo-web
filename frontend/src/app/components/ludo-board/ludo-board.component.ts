@@ -185,7 +185,19 @@ export class LudoBoardComponent {
     // Si el destino es la zona de end y estamos en el camino de color
     if (typeof toPosition === 'string' && toPosition === this.END_ZONE_POSITIONS[this.selectedChip!.color] &&
         typeof fromPosition === 'string' && this.isInColorPath(fromPosition, this.selectedChip!.color)) {
-      // Ir directamente a la zona de end
+      // Si estamos en cp5, ir directamente a la zona de end
+      if (fromPosition === this.COLOR_PATHS[this.selectedChip!.color][4]) { // cp5 es el índice 4
+        path.push(toPosition);
+        return path;
+      }
+      // Si no estamos en cp5, continuar por el camino de color hasta llegar a cp5 y luego a la zona de end
+      while (currentPos !== this.COLOR_PATHS[this.selectedChip!.color][4]) {
+        const nextPos = this.getNextPosition(currentPos, this.selectedChip!.color);
+        if (nextPos === -1 || nextPos === currentPos) break;
+        currentPos = nextPos;
+        path.push(currentPos);
+      }
+      // Agregar la zona de end
       path.push(toPosition);
       return path;
     }
@@ -219,6 +231,10 @@ export class LudoBoardComponent {
       const currentIndex = colorPath.indexOf(currentPosition);
       if (currentIndex < colorPath.length - 1) {
         return colorPath[currentIndex + 1];
+      }
+      // Si está en la última posición del camino de color (cp5), puede ir a la zona de finalización
+      if (currentIndex === colorPath.length - 1) {
+        return this.END_ZONE_POSITIONS[color];
       }
       return -1; // Llegó al final del camino
     }
