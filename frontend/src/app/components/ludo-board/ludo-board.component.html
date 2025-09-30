@@ -19,48 +19,56 @@
 
   <div class="start-zone red six-six">
     <div class="sarea">
-      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('red'); let i = index">
+      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('red'); let i = index"
+           [class.empty-slot]="!slot.chip"
+           (click)="!slot.chip ? onPositionClick('start-slot-red-' + i) : null">
         <app-chip
           *ngIf="slot.chip"
           [color]="slot.chip.color"
           [selected]="slot.chip.selected"
-          (click)="onChipClick(slot.chip!)">
+          (click)="onChipClick(slot.chip!); $event.stopPropagation()">
         </app-chip>
       </div>
     </div>
   </div>
   <div class="start-zone blue six-six">
     <div class="sarea">
-      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('blue'); let i = index">
+      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('blue'); let i = index"
+           [class.empty-slot]="!slot.chip"
+           (click)="!slot.chip ? onPositionClick('start-slot-blue-' + i) : null">
         <app-chip
           *ngIf="slot.chip"
           [color]="slot.chip.color"
           [selected]="slot.chip.selected"
-          (click)="onChipClick(slot.chip!)">
+          (click)="onChipClick(slot.chip!); $event.stopPropagation()">
         </app-chip>
       </div>
     </div>
   </div>
   <div class="start-zone green six-six">
     <div class="sarea">
-      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('green'); let i = index">
+      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('green'); let i = index"
+           [class.empty-slot]="!slot.chip"
+           (click)="!slot.chip ? onPositionClick('start-slot-green-' + i) : null">
         <app-chip
           *ngIf="slot.chip"
           [color]="slot.chip.color"
           [selected]="slot.chip.selected"
-          (click)="onChipClick(slot.chip!)">
+          (click)="onChipClick(slot.chip!); $event.stopPropagation()">
         </app-chip>
       </div>
     </div>
   </div>
   <div class="start-zone yellow six-six">
     <div class="sarea">
-      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('yellow'); let i = index">
+      <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('yellow'); let i = index"
+           [class.empty-slot]="!slot.chip"
+           (click)="!slot.chip ? onPositionClick('start-slot-yellow-' + i) : null">
         <app-chip
           *ngIf="slot.chip"
           [color]="slot.chip.color"
           [selected]="slot.chip.selected"
-          (click)="onChipClick(slot.chip!)">
+          (click)="onChipClick(slot.chip!); $event.stopPropagation()">
         </app-chip>
       </div>
     </div>

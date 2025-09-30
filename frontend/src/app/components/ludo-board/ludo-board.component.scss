@@ -345,3 +345,36 @@
   font-size: 18px;
   text-align: center;
 }
+
+// Estilos para espacios vacíos clickeables
+.start-pawn {
+  &.empty-slot {
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    border: 2px dashed transparent;
+
+    &:hover {
+      border-color: #3498db;
+      background-color: rgba(52, 152, 219, 0.1);
+      transform: scale(1.05);
+    }
+
+    &::after {
+      content: '+';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      color: #3498db;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover::after {
+      opacity: 0.7;
+    }
+  }
+}
