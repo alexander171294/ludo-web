@@ -75,8 +75,33 @@ Content-Type: application/json
 
 {
   "name": "Nombre del Jugador",
-  "color": "red",
-  "playerId": "uuid-del-jugador"
+  "color": "red"
+}
+```
+**Respuesta:**
+```json
+{
+  "success": true,
+  "message": "Te uniste exitosamente al juego",
+  "gameId": "uuid-del-juego",
+  "playerId": "uuid-del-jugador-generado-por-backend"
+}
+```
+
+#### Rejoin a un juego existente
+```http
+GET /ludo/game/{gameId}/rejoin/{playerId}
+```
+**Respuesta:**
+```json
+{
+  "success": true,
+  "message": "Rejoin exitoso",
+  "playerData": {
+    "name": "Nombre del Jugador",
+    "color": "red",
+    "isReady": false
+  }
 }
 ```
 
@@ -169,9 +194,19 @@ GET /ludo/game/{gameId}/status
 curl -X POST http://localhost:3000/ludo/create-game
 
 # Unirse al juego (repetir para cada jugador)
+# El backend genera automáticamente el playerId
 curl -X POST http://localhost:3000/ludo/game/{gameId}/join \
   -H "Content-Type: application/json" \
-  -d '{"name": "Jugador 1", "color": "red", "playerId": "player1"}'
+  -d '{"name": "Jugador 1", "color": "red"}'
+
+# Guardar el playerId devuelto para futuros rejoin
+# Respuesta: {"success": true, "playerId": "uuid-generado", ...}
+```
+
+### 1.1. Rejoin a un juego existente
+```bash
+# Si ya tienes un playerId, puedes hacer rejoin
+curl -X GET http://localhost:3000/ludo/game/{gameId}/rejoin/{playerId}
 ```
 
 ### 2. Marcar jugadores como listos

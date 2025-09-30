@@ -35,16 +35,21 @@ export class HomeComponent implements OnInit {
       this.isLoading = true;
       this.errorMessage = '';
 
-      // Verificar que la sala existe
+      // Verificar que la sala existe y está en fase de espera
       this.ludoService.getRoomInfo(this.roomCode).subscribe({
         next: (response) => {
           this.isLoading = false;
           if ('error' in response) {
             this.errorMessage = 'Sala no encontrada';
           } else {
-            this.router.navigate(['/color-selector'], {
-              queryParams: { roomCode: this.roomCode }
-            });
+            // Verificar si el juego está en fase de espera
+            if (response.gamePhase === 'waiting') {
+              this.router.navigate(['/color-selector'], {
+                queryParams: { roomCode: this.roomCode }
+              });
+            } else {
+              this.errorMessage = 'La partida ya ha comenzado. No puedes unirte ahora.';
+            }
           }
         },
         error: (error) => {

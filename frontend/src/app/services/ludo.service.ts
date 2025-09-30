@@ -6,7 +6,6 @@ import { environment } from '../../environments/environment';
 export interface JoinGameDto {
   name: string;
   color: string;
-  playerId: string;
 }
 
 export interface CreateRoomResponse {
@@ -17,7 +16,8 @@ export interface CreateRoomResponse {
 export interface JoinRoomResponse {
   success: boolean;
   message: string;
-  roomId?: string;
+  gameId: string;
+  playerId: string;
 }
 
 export interface RoomInfo {
@@ -61,8 +61,8 @@ export class LudoService {
     return this.http.get<RoomInfo | { error: string }>(`${this.apiUrl}/game/${gameId}`);
   }
 
-  joinRoom(roomId: string, joinData: JoinGameDto): Observable<JoinRoomResponse> {
-    return this.http.post<JoinRoomResponse>(`${this.apiUrl}/room/${roomId}/join`, joinData);
+  joinRoom(gameId: string, joinData: JoinGameDto): Observable<JoinRoomResponse> {
+    return this.http.post<JoinRoomResponse>(`${this.apiUrl}/game/${gameId}/join`, joinData);
   }
 
   getAvailableRooms(): Observable<RoomInfo[]> {

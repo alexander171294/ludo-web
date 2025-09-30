@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { LudoGameStateManager, LudoGameState } from './ludo-game-state';
 import { LudoWatchdogService, WatchdogEvent } from './ludo-watchdog.service';
 
@@ -46,21 +47,48 @@ export class LudoService {
   }
 
   // Unirse a un juego
-  async joinGame(gameId: string, playerData: { name: string; color: string; playerId: string }): Promise<{ success: boolean; message: string }> {
-    const result = this.gameStateManager.joinGame(gameId, playerData);
+  async joinGame(gameId: string, playerData: { name: string; color: string }): Promise<{ success: boolean; message: string; playerId?: string }> {
+    const playerId = uuidv4();
+    const result = this.gameStateManager.joinGame(gameId, { ...playerData, playerId });
     
     if (result.success) {
       // Registrar evento
       this.watchdogService.recordEvent({
         type: 'player_joined',
         gameId,
-        playerId: playerData.playerId,
+        playerId,
         data: { playerName: playerData.name, color: playerData.color },
         timestamp: new Date(),
       });
     }
 
-    return result;
+    return {
+      ...result,
+      playerId: result.success ? playerId : undefined,
+    };
+  }
+
+  // Rejoin a un juego existente
+  rejoinGame(gameId: string, playerId: string): { success: boolean; message: string; playerData?: { name: string; color: string; isReady: boolean } } {
+    const gameState = this.gameStateManager.getGameState(gameId);
+    if (!gameState) {
+      return { success: false, message: 'Juego no encontrado' };
+    }
+
+    const player = gameState.players.find(p => p.id === playerId);
+    if (!player) {
+      return { success: false, message: 'Jugador no encontrado en este juego' };
+    }
+
+    return {
+      success: true,
+      message: 'Rejoin exitoso',
+      playerData: {
+        name: player.name,
+        color: player.color,
+        isReady: player.isReady,
+      },
+    };
   }
 
   // Marcar jugador como listo

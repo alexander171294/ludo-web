@@ -6,7 +6,6 @@ import { WatchdogEvent } from './ludo-watchdog.service';
 interface JoinGameDto {
   name: string;
   color: string;
-  playerId: string;
 }
 
 interface SetReadyDto {
@@ -26,6 +25,17 @@ interface JoinGameResponse {
   success: boolean;
   message: string;
   gameId?: string;
+  playerId?: string;
+}
+
+interface RejoinGameResponse {
+  success: boolean;
+  message: string;
+  playerData?: {
+    name: string;
+    color: string;
+    isReady: boolean;
+  };
 }
 
 interface GameActionResponse {
@@ -77,6 +87,14 @@ export class LudoController {
       ...result,
       gameId: result.success ? gameId : undefined,
     };
+  }
+
+  @Get('game/:gameId/rejoin/:playerId')
+  rejoinGame(
+    @Param('gameId') gameId: string,
+    @Param('playerId') playerId: string,
+  ): RejoinGameResponse {
+    return this.ludoService.rejoinGame(gameId, playerId);
   }
 
   @Put('game/:gameId/player/:playerId/ready')

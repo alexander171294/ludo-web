@@ -150,8 +150,7 @@ export class ColorSelectorComponent implements OnInit {
 
       const joinData = {
         name: this.playerName.trim(),
-        color: this.selectedColor,
-        playerId: this.generatePlayerId()
+        color: this.selectedColor
       };
 
       this.ludoService.joinRoom(this.roomCode, joinData).subscribe({
@@ -163,6 +162,7 @@ export class ColorSelectorComponent implements OnInit {
                 roomCode: this.roomCode,
                 color: this.selectedColor,
                 playerName: this.playerName,
+                playerId: response.playerId,
                 isHost: this.isHost
               }
             });
@@ -179,7 +179,4 @@ export class ColorSelectorComponent implements OnInit {
     }
   }
 
-  private generatePlayerId(): string {
-    return 'player_' + Math.random().toString(36).substring(2, 15);
-  }
 }
