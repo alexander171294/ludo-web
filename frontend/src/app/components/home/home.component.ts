@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -9,10 +9,22 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   roomCode: string = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
+
+  ngOnInit() {
+    // Verificar si hay un código de sala en la URL
+    this.route.queryParams.subscribe(params => {
+      if (params['room']) {
+        this.roomCode = params['room'];
+      }
+    });
+  }
 
   joinRoom() {
     if (this.roomCode && this.roomCode.length >= 4) {

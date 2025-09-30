@@ -20,6 +20,7 @@ export class ColorSelectorComponent implements OnInit {
   selectedColor: string = '';
   playerName: string = '';
   isHost: boolean = false;
+  copied: boolean = false;
 
   colors: Color[] = [
     { id: 'red', name: 'Rojo', hex: '#FF6B6B' },
@@ -42,6 +43,51 @@ export class ColorSelectorComponent implements OnInit {
 
   selectColor(colorId: string) {
     this.selectedColor = colorId;
+  }
+
+  copyRoomCode() {
+    const roomUrl = `${window.location.origin}?room=${this.roomCode}`;
+
+    if (navigator.clipboard && window.isSecureContext) {
+      // Usar la API moderna de clipboard
+      navigator.clipboard.writeText(roomUrl).then(() => {
+        this.showCopiedFeedback();
+      }).catch(() => {
+        this.fallbackCopy(roomUrl);
+      });
+    } else {
+      // Fallback para navegadores más antiguos
+      this.fallbackCopy(roomUrl);
+    }
+  }
+
+  private fallbackCopy(text: string) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      document.execCommand('copy');
+      this.showCopiedFeedback();
+    } catch (err) {
+      console.error('Error al copiar:', err);
+      // Mostrar el código de sala en un alert como último recurso
+      alert(`Código de sala: ${this.roomCode}\n\nComparte este código con otros jugadores.`);
+    }
+
+    document.body.removeChild(textArea);
+  }
+
+  private showCopiedFeedback() {
+    this.copied = true;
+    setTimeout(() => {
+      this.copied = false;
+    }, 2000);
   }
 
   joinGame() {
