@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { LudoService, RoomInfo } from './ludo.service';
 
 interface JoinGameDto {
@@ -20,7 +20,7 @@ interface JoinRoomResponse {
 
 @Controller('ludo')
 export class LudoController {
-  constructor(private readonly ludoService: LudoService) {}
+  constructor(private readonly ludoService: LudoService) { }
 
   @Post('create-room')
   createRoom(): CreateRoomResponse {
@@ -57,10 +57,14 @@ export class LudoController {
     return this.ludoService.getAvailableRooms();
   }
 
-  @Get('available-colors')
-  getAvailableColors() {
+  @Get('available-colors/:roomId')
+  getAvailableColors(@Param('roomId') roomId: string) {
+    const roomInfo = this.ludoService.getRoomInfo(roomId);
+    if (!roomInfo) {
+      return { error: 'Sala no encontrada' };
+    }
     return {
-      colors: ['red', 'blue', 'yellow', 'green'],
+      colors: roomInfo.availableColors,
     };
   }
 }

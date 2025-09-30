@@ -114,6 +114,7 @@
         <!-- Colores Disponibles -->
         <div class="section">
             <h3>5. Colores Disponibles</h3>
+            <input type="text" id="colorsRoomInput" placeholder="ID de la sala">
             <button onclick="getAvailableColors()">Obtener Colores</button>
             <div id="availableColors"></div>
         </div>
@@ -251,14 +252,29 @@
         }
 
         async function getAvailableColors() {
+            const roomId = document.getElementById('colorsRoomInput').value;
+            if (!roomId) {
+                showStatus('availableColors', 'Por favor ingresa un ID de sala', 'error');
+                return;
+            }
+
             try {
-                const response = await fetch(`${API_BASE}/available-colors`);
+                const response = await fetch(`${API_BASE}/available-colors/${roomId}`);
                 const data = await response.json();
                 
+                if (data.error) {
+                    showStatus('availableColors', data.error, 'error');
+                    return;
+                }
+
                 let html = '<div class="room-info">';
-                data.colors.forEach(color => {
-                    html += `<span class="player ${color}">${color}</span>`;
-                });
+                if (data.colors.length === 0) {
+                    html += '<p>No hay colores disponibles</p>';
+                } else {
+                    data.colors.forEach(color => {
+                        html += `<span class="player ${color}">${color}</span>`;
+                    });
+                }
                 html += '</div>';
                 document.getElementById('availableColors').innerHTML = html;
             } catch (error) {
@@ -266,9 +282,9 @@
             }
         }
 
-        // Cargar colores disponibles al cargar la página
+        // Cargar información inicial al cargar la página
         window.onload = function() {
-            getAvailableColors();
+            // No cargar colores automáticamente ya que requiere un roomId
         };
     </script>
 </body>

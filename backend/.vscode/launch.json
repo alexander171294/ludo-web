@@ -1,0 +1,79 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🚀 Start Ludo Backend (Development)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/@nestjs/cli/bin/nest.js",
+      "args": ["start", "--debug", "--watch"],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "restart": true,
+      "protocol": "inspector",
+      "port": 9229,
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    },
+    {
+      "name": "🔧 Start Ludo Backend (Debug Mode)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/@nestjs/cli/bin/nest.js",
+      "args": ["start", "--debug", "--watch"],
+      "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "*"
+      },
+      "console": "integratedTerminal",
+      "restart": true,
+      "protocol": "inspector",
+      "port": 9229,
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    },
+    {
+      "name": "🏗️ Build Ludo Backend",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/@nestjs/cli/bin/nest.js",
+      "args": ["build"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    },
+    {
+      "name": "🧪 Run Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--runInBand", "--detectOpenHandles"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    },
+    {
+      "name": "🧪 Run E2E Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--config", "./test/jest-e2e.json", "--runInBand", "--detectOpenHandles"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🎮 Full Ludo Development",
+      "configurations": [
+        "🚀 Start Ludo Backend (Development)"
+      ],
+      "stopAll": true
+    }
+  ]
+}
