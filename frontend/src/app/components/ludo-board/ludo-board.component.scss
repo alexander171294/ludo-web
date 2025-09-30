@@ -175,28 +175,70 @@
     transform: rotate(45deg);
     position: absolute;
 
+    .end-pawn {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 16px;
+      &.ep1 {
+        top: 32px;
+        right: 8px;
+      }
+      &.ep2 {
+        top: 13px;
+        right: 28px;
+      }
+      &.ep3 {
+        top: 9px;
+        right: 8px;
+      }
+      &.ep4 {
+        top: 2px;
+        right: 44px;
+      }
+    }
+
     &.red {
       background-color: #EF422F;
       left: -40px;
       top: 16px;
+      .end-pawn.active {
+        background: #9e0000;
+        border: 1px solid #ffb8b8;
+      }
     }
 
     &.blue {
       background-color: #2E9DE6;
       right: 16px;
       top: -40px;
+      transform: rotate(135deg);
+      .end-pawn.active {
+        background: #14598d;
+        border: 1px solid #b8c4ff;
+      }
     }
 
     &.green {
       background-color: #5DBE4D;
       right: 16px;
       bottom: -40px;
+      transform: rotate(315deg);
+      .end-pawn.active {
+        background: #398d14;
+        border: 1px solid #b8ffc2;
+      }
     }
 
     &.yellow {
       background-color: #ECBA11;
       right: -40px;
       top: 16px;
+      transform: rotate(226deg);
+      .end-pawn.active {
+        background: #8d5d14;
+        border: 1px solid #ffecb8;
+      }
     }
   }
 }
