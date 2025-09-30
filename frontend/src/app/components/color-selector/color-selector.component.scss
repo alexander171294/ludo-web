@@ -1,6 +1,6 @@
 .color-selector-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: radial-gradient(#346424 20%, #121212 90%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,7 +29,7 @@
     padding: 12px 20px;
     border-radius: 25px;
     backdrop-filter: blur(10px);
-
+    justify-content: space-between;
     p {
       color: rgba(255, 255, 255, 0.9);
       font-size: 1.1rem;
@@ -81,7 +81,6 @@
   gap: 20px;
   justify-content: center;
   margin-bottom: 40px;
-  max-width: 400px;
 }
 
 .color-option {
@@ -180,22 +179,22 @@
   .join-game-btn {
     width: 100%;
     padding: 15px 20px;
-    background: #4CAF50;
-    color: white;
-    border: none;
+    background: linear-gradient(312deg, #DFB03E, #DBC48C);
+    color: #9F6026;
     border-radius: 25px;
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+    box-shadow: 0 0px 0px 5px rgb(255 255 255 / 46%);
     transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    border: 1px solid #D6D7B2;
+    border-bottom: 1px solid #AC8438;
+    border-top: #B49C69;
 
     &:hover:not(:disabled) {
-      background: #45a049;
+      background: linear-gradient(312deg, #DBC48C, #DFB03E);
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+      box-shadow: 0 4px 20px #ff9800a3;
     }
 
     &:disabled {

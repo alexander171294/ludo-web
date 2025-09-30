@@ -23,10 +23,10 @@ export class ColorSelectorComponent implements OnInit {
   copied: boolean = false;
 
   colors: Color[] = [
-    { id: 'red', name: 'Rojo', hex: '#FF6B6B' },
-    { id: 'blue', name: 'Azul', hex: '#4ECDC4' },
-    { id: 'green', name: 'Verde', hex: '#45B7D1' },
-    { id: 'yellow', name: 'Amarillo', hex: '#FFA07A' }
+    { id: 'red', name: 'Rojo', hex: '#EF422F' },
+    { id: 'blue', name: 'Azul', hex: '#2E9DE6' },
+    { id: 'green', name: 'Verde', hex: '#5DBE4D' },
+    { id: 'yellow', name: 'Amarillo', hex: '#ECBA11' }
   ];
 
   constructor(
