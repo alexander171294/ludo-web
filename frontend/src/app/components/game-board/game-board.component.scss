@@ -190,7 +190,8 @@
   background: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   backdrop-filter: blur(10px);
-  max-height: 360px;
+  // Mobile version
+  //max-height: 360px;
   overflow: hidden;
 
   .placeholder-content {

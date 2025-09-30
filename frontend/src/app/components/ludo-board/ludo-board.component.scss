@@ -10,8 +10,9 @@
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transform: scale(0.6);
-  transform-origin: top center;
+  // Mobile version
+  //transform: scale(0.6);
+  //transform-origin: top center;
 }
 
 .oneBlock {
@@ -30,6 +31,8 @@
       transform: rotate(90deg);
       fill: #2e9de5;
       width: 70%;
+      position: absolute;
+      width: 30px;
     }
   }
   &.blue-begin {
@@ -50,6 +53,8 @@
     svg {
       fill: #EF422F;
       width: 70%;
+      position: absolute;
+      width: 30px;
     }
   }
 
@@ -65,6 +70,8 @@
       transform: rotate(-180deg);
       fill: #ECBA11;
       width: 70%;
+      position: absolute;
+      width: 30px;
     }
   }
 
@@ -80,6 +87,8 @@
       transform: rotate(-90deg);
       fill: #5DBE4D;
       width: 70%;
+      position: absolute;
+      width: 30px;
     }
   }
 
@@ -91,6 +100,8 @@
     background-color: rgb(215 215 215);
     svg {
       fill: gray;
+      position: absolute;
+      width: 30px;
     }
   }
 
