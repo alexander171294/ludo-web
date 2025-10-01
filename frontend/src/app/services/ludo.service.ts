@@ -99,4 +99,10 @@ export class LudoService {
   rollDice(gameId: string, playerId: string): Observable<{ success: boolean; message: string; diceValue?: number }> {
     return this.http.post<{ success: boolean; message: string; diceValue?: number }>(`${this.apiUrl}/game/${gameId}/player/${playerId}/roll-dice`, {});
   }
+
+  selectPiece(gameId: string, playerId: string, pieceId: number): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(`${this.apiUrl}/game/${gameId}/player/${playerId}/select-piece`, {
+      pieceId: pieceId
+    });
+  }
 }

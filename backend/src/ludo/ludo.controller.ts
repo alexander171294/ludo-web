@@ -234,14 +234,6 @@ export class LudoController {
     return this.ludoService.selectPiece(gameId, playerId, selectData.pieceId);
   }
 
-  @Post('game/:gameId/player/:playerId/move-piece')
-  movePiece(
-    @Param('gameId') gameId: string,
-    @Param('playerId') playerId: string,
-  ): { success: boolean; message: string } {
-    return this.ludoService.movePiece(gameId, playerId);
-  }
-
   // ===== WATCHDOG Y SUSCRIPCIONES =====
 
   @Post('game/:gameId/subscribe/:playerId')

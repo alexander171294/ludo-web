@@ -177,38 +177,25 @@ export class LudoService {
     return result;
   }
 
-  // Seleccionar pieza
+  // Seleccionar y mover pieza
   selectPiece(gameId: string, playerId: string, pieceId: number): { success: boolean; message: string } {
-    const result = this.gameStateManager.selectPiece(gameId, playerId, pieceId);
+    // Primero seleccionar la pieza
+    const selectResult = this.gameStateManager.selectPiece(gameId, playerId, pieceId);
     
-    if (result.success) {
-      // Registrar evento
-      this.watchdogService.recordEvent({
-        type: 'piece_selected',
-        gameId,
-        playerId,
-        data: { pieceId },
-        timestamp: new Date(),
-      });
-
-      // Programar verificación periódica del tiempo restante
-      this.scheduleTimeoutCheck(gameId, playerId);
+    if (!selectResult.success) {
+      return selectResult;
     }
 
-    return result;
-  }
-
-  // Mover ficha
-  movePiece(gameId: string, playerId: string): { success: boolean; message: string } {
-    const result = this.gameStateManager.movePiece(gameId, playerId);
+    // Luego mover la pieza automáticamente
+    const moveResult = this.gameStateManager.movePiece(gameId, playerId);
     
-    if (result.success) {
-      // Registrar evento
+    if (moveResult.success) {
+      // Registrar evento de pieza movida
       this.watchdogService.recordEvent({
         type: 'piece_moved',
         gameId,
         playerId,
-        data: { success: true },
+        data: { pieceId, success: true },
         timestamp: new Date(),
       });
 
@@ -225,8 +212,9 @@ export class LudoService {
       }
     }
 
-    return result;
+    return moveResult;
   }
+
 
   // Obtener todos los juegos disponibles
   getAvailableGames(): LudoGameState[] {

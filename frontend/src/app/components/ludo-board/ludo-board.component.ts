@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChipComponent } from '../chip/chip.component';
-import { RoomInfo, Player, Piece } from '../../services/ludo.service';
+import { RoomInfo, Player, Piece, LudoService } from '../../services/ludo.service';
 
 interface Chip {
   id: string;
@@ -81,7 +81,7 @@ export class LudoBoardComponent implements OnChanges {
     green: 'green-end',
   };
 
-  constructor() {
+  constructor(private ludoService: LudoService) {
     this.initializeGame();
   }
 
@@ -241,6 +241,12 @@ export class LudoBoardComponent implements OnChanges {
   }
 
   onChipClick(chip: Chip) {
+    // Solo permitir selección si la pieza está activa y es mi turno
+    if (!this.isChipActive(chip)) {
+      console.log('No se puede seleccionar esta pieza en este momento');
+      return;
+    }
+
     // Deseleccionar ficha anterior si existe
     if (this.selectedChip && this.selectedChip.id !== chip.id) {
       this.selectedChip.selected = false;
@@ -249,6 +255,47 @@ export class LudoBoardComponent implements OnChanges {
     // Toggle selección de la ficha actual
     chip.selected = !chip.selected;
     this.selectedChip = chip.selected ? chip : null;
+
+    // Si se seleccionó la pieza, llamar al endpoint
+    if (chip.selected && this.gameInfo && this.playerId) {
+      this.selectPiece(chip);
+    }
+  }
+
+  /**
+   * Llama al endpoint para seleccionar una pieza
+   * @param chip - La pieza seleccionada
+   */
+  private selectPiece(chip: Chip) {
+    if (!this.gameInfo || !this.playerId) {
+      console.error('No hay información del juego o playerId');
+      return;
+    }
+
+    // Extraer el ID de la pieza del ID del chip (formato: "color-id")
+    const pieceId = parseInt(chip.id.split('-')[1]);
+
+    console.log(`Seleccionando pieza ${pieceId} del jugador ${chip.color}`);
+
+    this.ludoService.selectPiece(this.gameInfo.gameId, this.playerId, pieceId).subscribe({
+      next: (response) => {
+        console.log('Pieza seleccionada:', response);
+        if (response.success) {
+          console.log('Pieza seleccionada exitosamente');
+        } else {
+          console.error('Error al seleccionar la pieza:', response.message);
+          // Deseleccionar la pieza si hay error
+          chip.selected = false;
+          this.selectedChip = null;
+        }
+      },
+      error: (error) => {
+        console.error('Error al seleccionar la pieza:', error);
+        // Deseleccionar la pieza si hay error
+        chip.selected = false;
+        this.selectedChip = null;
+      }
+    });
   }
 
   onPositionClick(position: number | string) {
