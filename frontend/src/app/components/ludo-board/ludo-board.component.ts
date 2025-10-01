@@ -111,6 +111,29 @@ export class LudoBoardComponent implements OnChanges {
     return chip.isInStartZone && currentPlayer.color === chip.color;
   }
 
+  /**
+   * Obtiene el color del jugador actual
+   * @returns el color del jugador actual o null si no se encuentra
+   */
+  getCurrentPlayerColor(): string | null {
+    if (!this.gameInfo || !this.playerId) {
+      return null;
+    }
+
+    const currentPlayer = this.gameInfo.players.find(player => player.id === this.playerId);
+    return currentPlayer ? currentPlayer.color : null;
+  }
+
+  /**
+   * Determina si debe mostrar "Eres tú" en una zona específica
+   * @param color - Color de la zona (red, blue, green, yellow)
+   * @returns true si debe mostrar "Eres tú"
+   */
+  shouldShowYouLabel(color: string): boolean {
+    const currentPlayerColor = this.getCurrentPlayerColor();
+    return currentPlayerColor === color;
+  }
+
   updateChipsFromGameState() {
     if (!this.gameInfo) return;
 

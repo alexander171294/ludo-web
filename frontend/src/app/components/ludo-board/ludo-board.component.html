@@ -18,7 +18,7 @@
 
 
   <div class="start-zone red six-six">
-    <div class="you">Eres tú</div>
+    <div class="you" *ngIf="shouldShowYouLabel('red')">Eres tú</div>
     <div class="sarea">
       <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('red'); let i = index"
            [class.empty-slot]="!slot.chip"
@@ -34,7 +34,7 @@
     </div>
   </div>
   <div class="start-zone blue six-six">
-    <div class="you">Eres tú</div>
+    <div class="you" *ngIf="shouldShowYouLabel('blue')">Eres tú</div>
     <div class="sarea">
       <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('blue'); let i = index"
            [class.empty-slot]="!slot.chip"
@@ -63,7 +63,7 @@
         </app-chip>
       </div>
     </div>
-    <div class="you bottom">Eres tú</div>
+    <div class="you bottom" *ngIf="shouldShowYouLabel('green')">Eres tú</div>
   </div>
   <div class="start-zone yellow six-six">
     <div class="sarea">
@@ -79,7 +79,7 @@
         </app-chip>
       </div>
     </div>
-    <div class="you bottom">Eres tú</div>
+    <div class="you bottom" *ngIf="shouldShowYouLabel('yellow')">Eres tú</div>
   </div>
 
 
