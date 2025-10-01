@@ -58,4 +58,20 @@
   &.selected {
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2392156863), 0px 0px 0px 1px rgba(0, 0, 0, 0.7215686275), inset 1px 3px 8px rgba(255, 255, 255, 0.2588235294), 0px 0px 16px #ffffff, inset 0px 0px 6px rgb(255 255 255 / 67%);
   }
+
+  &.active {
+    animation: pulse-glow 1.5s ease-in-out infinite alternate;
+    box-shadow: 0px 0px 12px rgba(255, 255, 255, 0.6), 0px 0px 24px rgba(255, 255, 255, 0.4), inset 1px 3px 8px rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+    cursor: pointer;
+  }
+}
+
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0px 0px 12px rgba(255, 255, 255, 0.6), 0px 0px 24px rgba(255, 255, 255, 0.4), inset 1px 3px 8px rgba(255, 255, 255, 0.3);
+  }
+  100% {
+    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.8), 0px 0px 40px rgba(255, 255, 255, 0.6), inset 1px 3px 8px rgba(255, 255, 255, 0.5);
+  }
 }

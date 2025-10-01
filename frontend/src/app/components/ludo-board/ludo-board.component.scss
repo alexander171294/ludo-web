@@ -118,6 +118,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+
+  .you {
+    position: absolute;
+    top: 5px;
+    font-weight: bold;
+    color: white;
+    &.bottom {
+      bottom: 5px;
+      top: auto;
+    }
+  }
 
   .sarea {
     width: 75%;

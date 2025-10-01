@@ -10,4 +10,5 @@ import { Component, Input } from '@angular/core';
 export class ChipComponent {
   @Input() color: 'red' | 'blue' | 'green' | 'yellow' = 'red';
   @Input() selected: boolean = false;
+  @Input() isActive: boolean = false;
 }

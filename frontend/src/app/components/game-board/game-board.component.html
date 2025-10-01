@@ -48,9 +48,13 @@
     </div>
   </div>
 
-  <div class="board-placeholder">
-    <app-ludo-board [gameInfo]="gameInfo"></app-ludo-board>
-  </div>
+          <div class="board-placeholder">
+            <app-ludo-board
+              [gameInfo]="gameInfo"
+              [playerId]="playerId"
+              [canMovePiece]="gameInfo?.canMovePiece || false">
+            </app-ludo-board>
+          </div>
 
   <div class="dice-rows" style="margin-bottom: -30px; z-index: 1;">
     <div class="dice-space dice-left">

@@ -41,12 +41,11 @@ export class DiceComponent implements OnInit {
       return;
     }
 
-    this.isThrowing = false;
-    this.isRolling = false;
-    this.rollingStateChanged.emit(this.isRolling);
+    console.log(`DiceComponent.roll() llamado con resultado: ${result}`);
 
-    // Establecer el valor del dado
-    this.setDiceValue(result);
+    this.isThrowing = false;
+    this.isRolling = true; // Iniciar en estado de rodando
+    this.rollingStateChanged.emit(this.isRolling);
 
     // Iniciar la animación de lanzamiento
     setTimeout(() => {
@@ -55,7 +54,12 @@ export class DiceComponent implements OnInit {
 
     // Mostrar el resultado después de la animación (2 segundos)
     setTimeout(() => {
+      console.log(`Estableciendo valor final del dado: ${result}`);
       this.diceValue = result;
+      this.setDiceValue(result); // Establecer la rotación visual al final
+      this.isRolling = false;
+      this.isThrowing = false;
+      this.rollingStateChanged.emit(this.isRolling);
       this.diceRolled.emit(result);
     }, 2000);
   }

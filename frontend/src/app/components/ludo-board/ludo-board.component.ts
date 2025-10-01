@@ -38,6 +38,8 @@ interface StartSlot {
 })
 export class LudoBoardComponent implements OnChanges {
   @Input() gameInfo: RoomInfo | null = null;
+  @Input() playerId: string = '';
+  @Input() canMovePiece: boolean = false;
 
   selectedChip: Chip | null = null;
   boardPositions: BoardPosition[] = [];
@@ -87,6 +89,26 @@ export class LudoBoardComponent implements OnChanges {
     if (changes['gameInfo'] && this.gameInfo) {
       this.updateChipsFromGameState();
     }
+  }
+
+  /**
+   * Determina si una pieza debe estar activa (seleccionable)
+   * @param chip - La pieza a evaluar
+   * @returns true si la pieza debe estar activa
+   */
+  isChipActive(chip: Chip): boolean {
+    if (!this.gameInfo || !this.playerId || !this.canMovePiece) {
+      return false;
+    }
+
+    // Buscar el jugador actual
+    const currentPlayer = this.gameInfo.players.find(player => player.id === this.playerId);
+    if (!currentPlayer) {
+      return false;
+    }
+
+    // Solo activar si es mi turno y la pieza está en la zona de inicio
+    return chip.isInStartZone && currentPlayer.color === chip.color;
   }
 
   updateChipsFromGameState() {

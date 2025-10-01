@@ -18,6 +18,7 @@
 
 
   <div class="start-zone red six-six">
+    <div class="you">Eres tú</div>
     <div class="sarea">
       <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('red'); let i = index"
            [class.empty-slot]="!slot.chip"
@@ -26,12 +27,14 @@
           *ngIf="slot.chip"
           [color]="slot.chip.color"
           [selected]="slot.chip.selected"
+          [isActive]="isChipActive(slot.chip)"
           (click)="onChipClick(slot.chip!); $event.stopPropagation()">
         </app-chip>
       </div>
     </div>
   </div>
   <div class="start-zone blue six-six">
+    <div class="you">Eres tú</div>
     <div class="sarea">
       <div class="start-pawn sp1" *ngFor="let slot of getStartSlots('blue'); let i = index"
            [class.empty-slot]="!slot.chip"
@@ -40,6 +43,7 @@
           *ngIf="slot.chip"
           [color]="slot.chip.color"
           [selected]="slot.chip.selected"
+          [isActive]="isChipActive(slot.chip)"
           (click)="onChipClick(slot.chip!); $event.stopPropagation()">
         </app-chip>
       </div>
@@ -54,10 +58,12 @@
           *ngIf="slot.chip"
           [color]="slot.chip.color"
           [selected]="slot.chip.selected"
+          [isActive]="isChipActive(slot.chip)"
           (click)="onChipClick(slot.chip!); $event.stopPropagation()">
         </app-chip>
       </div>
     </div>
+    <div class="you bottom">Eres tú</div>
   </div>
   <div class="start-zone yellow six-six">
     <div class="sarea">
@@ -68,10 +74,12 @@
           *ngIf="slot.chip"
           [color]="slot.chip.color"
           [selected]="slot.chip.selected"
+          [isActive]="isChipActive(slot.chip)"
           (click)="onChipClick(slot.chip!); $event.stopPropagation()">
         </app-chip>
       </div>
     </div>
+    <div class="you bottom">Eres tú</div>
   </div>
 
 
