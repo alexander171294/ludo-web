@@ -36,6 +36,7 @@ export interface Player {
   pieces: Piece[];
   actionTimeLeft?: number;
   action?: string;
+  diceValue?: number;
 }
 
 export interface RoomInfo {
@@ -93,5 +94,9 @@ export class LudoService {
 
   startGame(gameId: string): Observable<{ success: boolean; message: string }> {
     return this.http.post<{ success: boolean; message: string }>(`${this.apiUrl}/game/${gameId}/start`, {});
+  }
+
+  rollDice(gameId: string, playerId: string): Observable<{ success: boolean; message: string; diceValue?: number }> {
+    return this.http.post<{ success: boolean; message: string; diceValue?: number }>(`${this.apiUrl}/game/${gameId}/player/${playerId}/roll-dice`, {});
   }
 }

@@ -122,10 +122,56 @@ export class LudoService {
         timestamp: new Date(),
       });
 
-      // Programar acción automática si se agota el tiempo de decisión
+      // Programar aplicación del resultado después de 5 segundos
       setTimeout(() => {
+        this.applyDiceResult(gameId);
+      }, 5000); // 5 segundos para la animación
+
+      // Programar verificación periódica del tiempo restante
+      this.scheduleTimeoutCheck(gameId, playerId);
+    }
+
+    return result;
+  }
+
+  // Programar verificación periódica del tiempo restante
+  private scheduleTimeoutCheck(gameId: string, playerId: string): void {
+    const checkInterval = setInterval(() => {
+      const gameState = this.gameStateManager.getGameState(gameId);
+      if (!gameState) {
+        clearInterval(checkInterval);
+        return;
+      }
+
+      const currentPlayer = gameState.players[gameState.currentPlayer];
+      if (!currentPlayer || currentPlayer.id !== playerId) {
+        clearInterval(checkInterval);
+        return;
+      }
+
+      // Actualizar tiempos de acción
+      this.updatePlayerActionTimes(gameState);
+
+      // Si el tiempo se agotó, ejecutar acción automática
+      if (currentPlayer.actionTimeLeft === 0 || currentPlayer.actionTimeLeft === undefined) {
+        clearInterval(checkInterval);
         this.handleTimeoutAction(gameId, playerId);
-      }, 30000); // 30 segundos
+      }
+    }, 1000); // Verificar cada segundo
+  }
+
+  // Aplicar resultado del dado
+  applyDiceResult(gameId: string): { success: boolean; message: string } {
+    const result = this.gameStateManager.applyDiceResult(gameId);
+    
+    if (result.success) {
+      // Registrar evento
+      this.watchdogService.recordEvent({
+        type: 'dice_result_applied',
+        gameId,
+        data: { message: 'Resultado del dado aplicado' },
+        timestamp: new Date(),
+      });
     }
 
     return result;
@@ -144,6 +190,9 @@ export class LudoService {
         data: { pieceId },
         timestamp: new Date(),
       });
+
+      // Programar verificación periódica del tiempo restante
+      this.scheduleTimeoutCheck(gameId, playerId);
     }
 
     return result;
@@ -240,6 +289,12 @@ export class LudoService {
 
     const currentPlayer = gameState.players[gameState.currentPlayer];
     if (currentPlayer.id !== playerId) return;
+
+    // Si está lanzando el dado, aplicar el resultado
+    if (currentPlayer.action === 'rolling') {
+      this.applyDiceResult(gameId);
+      return;
+    }
 
     // Si puede lanzar dado pero no lo ha hecho, lanzarlo automáticamente
     if (gameState.canRollDice) {

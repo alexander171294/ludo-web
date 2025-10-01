@@ -17,6 +17,7 @@ export interface WatchdogEvent {
     | 'player_ready'
     | 'game_started'
     | 'dice_rolled'
+    | 'dice_result_applied'
     | 'piece_selected'
     | 'piece_moved'
     | 'game_finished';

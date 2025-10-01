@@ -5,7 +5,7 @@ export interface Player {
   name: string;
   color: string;
   pieces: Piece[];
-  action?: 'roll_dice' | 'select_piece' | 'move_piece'; // Acción que debe realizar
+  action?: 'roll_dice' | 'rolling' | 'select_piece' | 'move_piece'; // Acción que debe realizar
   actionTimeLeft?: number; // Tiempo restante para realizar la acción (0-100)
   diceValue?: number; // Valor del dado que obtuvo
 }
@@ -216,15 +216,37 @@ export class LudoGameStateManager {
     gameState.diceValue = diceValue;
     gameState.canRollDice = false;
 
-    // Marcar que el jugador lanzó el dado
+    // Marcar que el jugador está lanzando el dado (para animación)
+    currentPlayer.action = 'rolling';
     currentPlayer.diceValue = diceValue;
+    gameState.decisionStartTime = new Date();
 
+    this.updateGameState(gameId, gameState);
+
+    return { success: true, message: 'Lanzando dado...', diceValue };
+  }
+
+  // Aplicar resultado del dado después de la animación
+  applyDiceResult(gameId: string): { success: boolean; message: string } {
+    const gameState = this.gameStates.get(gameId);
+    if (!gameState) {
+      return { success: false, message: 'Juego no encontrado' };
+    }
+
+    const currentPlayer = gameState.players[gameState.currentPlayer];
+    if (!currentPlayer || currentPlayer.action !== 'rolling') {
+      return { success: false, message: 'No hay dado siendo lanzado' };
+    }
+
+    const diceValue = gameState.diceValue;
+    
     // Verificar qué piezas pueden moverse
     const availablePieces = this.getAvailablePieces(currentPlayer, diceValue);
 
     if (availablePieces.length === 0) {
       // No hay piezas que se puedan mover, pasar turno
       currentPlayer.action = undefined;
+      currentPlayer.diceValue = undefined;
       gameState.decisionStartTime = undefined;
       gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
       gameState.canRollDice = true;
@@ -251,7 +273,7 @@ export class LudoGameStateManager {
 
     this.updateGameState(gameId, gameState);
 
-    return { success: true, message: 'Dado lanzado', diceValue };
+    return { success: true, message: 'Resultado del dado aplicado' };
   }
 
 

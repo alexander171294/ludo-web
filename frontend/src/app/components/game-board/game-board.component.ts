@@ -21,6 +21,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   isHost: boolean = false;
   gameInfo: RoomInfo | null = null;
   private gameStateSubscription?: Subscription;
+  private rollingPlayers: Set<string> = new Set(); // Control de jugadores que ya están rodando
 
   // Propiedades computadas para cada color
   get redPlayerExists(): boolean {
@@ -49,14 +50,21 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   }
 
   shouldShowDice(color: string): boolean {
-    if (!this.gameInfo?.canRollDice) {
-      console.log(`Dice ${color}: canRollDice is false`);
+    if (!this.gameInfo) {
       return false;
     }
 
-    const currentPlayerColor = this.getCurrentPlayerColor();
-    const shouldShow = currentPlayerColor === color;
-    console.log(`Dice ${color}: currentPlayerColor=${currentPlayerColor}, shouldShow=${shouldShow}`);
+    const player = this.getPlayerByColor(color);
+    if (!player) {
+      return false;
+    }
+
+    // Mostrar dado si el jugador puede lanzar o si está rodando
+    const canRoll = this.gameInfo.canRollDice && this.getCurrentPlayerColor() === color;
+    const isRolling = player.action === 'rolling';
+
+    const shouldShow = canRoll || isRolling;
+    console.log(`Dice ${color}: canRoll=${canRoll}, isRolling=${isRolling}, shouldShow=${shouldShow}`);
     return shouldShow;
   }
 
@@ -125,6 +133,8 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     if (this.gameStateSubscription) {
       this.gameStateSubscription.unsubscribe();
     }
+    // Limpiar el estado de rolling
+    this.rollingPlayers.clear();
   }
 
   startGameStatePolling() {
@@ -146,11 +156,40 @@ export class GameBoardComponent implements OnInit, OnDestroy {
           console.log('Fase del juego:', response.gamePhase);
           console.log('Puede lanzar dado:', response.canRollDice);
           console.log('Puede mover pieza:', response.canMovePiece);
+
+          // Procesar jugadores que están rodando
+          this.processRollingPlayers(response);
+
           this.gameInfo = response;
         }
       },
       error: (error) => {
         console.error('Error loading game state:', error);
+      }
+    });
+  }
+
+  /**
+   * Procesa los jugadores que tienen action: 'rolling' y hace rodar sus dados
+   */
+  private processRollingPlayers(gameInfo: RoomInfo) {
+    gameInfo.players.forEach(player => {
+      if (player.action === 'rolling' && player.diceValue !== undefined) {
+        const playerColor = player.color;
+
+        // Verificar si este jugador ya está rodando para evitar múltiples llamadas
+        if (!this.rollingPlayers.has(playerColor)) {
+          console.log(`Iniciando roll para jugador ${playerColor} con valor ${player.diceValue}`);
+
+          // Marcar como rodando
+          this.rollingPlayers.add(playerColor);
+
+          // Hacer rodar el dado
+          this.rollDiceWithValue(playerColor, player.diceValue);
+        }
+      } else if (player.action !== 'rolling') {
+        // Si el jugador ya no está rodando, removerlo del set
+        this.rollingPlayers.delete(player.color);
       }
     });
   }
@@ -230,30 +269,106 @@ export class GameBoardComponent implements OnInit, OnDestroy {
    * @param color - Color del jugador (red, blue, green, yellow)
    */
   onDiceClick(color: string) {
+    if (!this.gameInfo || !this.playerId) {
+      console.error('No hay información del juego o playerId');
+      return;
+    }
+
+    // Verificar que es el turno del jugador actual
+    const currentPlayerColor = this.getCurrentPlayerColor();
+    if (currentPlayerColor !== color) {
+      console.log(`No es el turno del jugador ${color}`);
+      return;
+    }
+
+    // Verificar que el dado no esté rodando
     if (this.players[color as keyof typeof this.players].isRolling) {
       return; // No permitir click si ya está rodando
     }
 
-    // Generar número aleatorio del 1 al 6
-    const randomValue = Math.floor(Math.random() * 6) + 1;
+    console.log(`Lanzando dado para ${color}...`);
 
-    console.log(`Dado ${color} lanzado: ${randomValue}`);
+    // Llamar al endpoint del backend
+    this.ludoService.rollDice(this.gameInfo.gameId, this.playerId).subscribe({
+      next: (response) => {
+        console.log('Respuesta del dado:', response);
 
-    // Llamar al método roll del dado correspondiente
-    switch (color) {
-      case 'red':
-        this.redDice?.roll(randomValue);
-        break;
-      case 'blue':
-        this.blueDice?.roll(randomValue);
-        break;
-      case 'green':
-        this.greenDice?.roll(randomValue);
-        break;
-      case 'yellow':
-        this.yellowDice?.roll(randomValue);
-        break;
-    }
+        if (response.success && response.diceValue) {
+          // Llamar al método roll del dado correspondiente con el valor del backend
+          this.rollDiceWithValue(color, response.diceValue);
+        } else {
+          console.error('Error al lanzar el dado:', response.message);
+        }
+      },
+      error: (error) => {
+        console.error('Error al lanzar el dado:', error);
+      }
+    });
+  }
+
+  /**
+   * Lanza el dado con el valor específico del backend
+   * @param color - Color del jugador
+   * @param value - Valor del dado del backend
+   */
+  private rollDiceWithValue(color: string, value: number) {
+    console.log(`Dado ${color} lanzado con valor: ${value}`);
+
+    // Asegurar que el dado esté visible antes de hacer la animación
+    setTimeout(() => {
+      // Llamar al método roll del dado correspondiente
+      switch (color) {
+        case 'red':
+          if (this.redDice) {
+            console.log('Lanzando dado rojo...');
+            this.animateDiceRoll(this.redDice, value);
+          }
+          break;
+        case 'blue':
+          if (this.blueDice) {
+            console.log('Lanzando dado azul...');
+            this.animateDiceRoll(this.blueDice, value);
+          }
+          break;
+        case 'green':
+          if (this.greenDice) {
+            console.log('Lanzando dado verde...');
+            this.animateDiceRoll(this.greenDice, value);
+          }
+          break;
+        case 'yellow':
+          if (this.yellowDice) {
+            console.log('Lanzando dado amarillo...');
+            this.animateDiceRoll(this.yellowDice, value);
+          }
+          break;
+      }
+    }, 100); // Pequeño delay para asegurar que el dado esté renderizado
+  }
+
+  /**
+   * Anima el dado correctamente para que ruede antes de mostrar el resultado
+   * @param diceComponent - Componente del dado
+   * @param result - Resultado final del dado
+   */
+  private animateDiceRoll(diceComponent: DiceComponent, result: number) {
+    // Primero establecer el estado de rodando
+    diceComponent.isRolling = true;
+    diceComponent.rollingStateChanged.emit(true);
+
+    // Iniciar la animación de lanzamiento
+    setTimeout(() => {
+      diceComponent.isThrowing = true;
+    }, 50);
+
+    // Mostrar el resultado después de la animación (2 segundos)
+    setTimeout(() => {
+      diceComponent.diceValue = result;
+      diceComponent.isRolling = false;
+      diceComponent.isThrowing = false;
+      diceComponent.rollingStateChanged.emit(false);
+      diceComponent.diceRolled.emit(result);
+    }, 2000);
   }
 
   /**
