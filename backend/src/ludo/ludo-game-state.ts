@@ -22,6 +22,26 @@ export interface Piece {
   endPathPosition?: number; // 1-4 para posiciones del end path
 }
 
+export interface Move {
+  pieceId: number;
+  playerColor: string;
+  fromPosition: string;
+  toPosition: string;
+  moveType: 'start_to_board' | 'board_move' | 'board_to_color' | 'color_move' | 'color_to_end' | 'end_move' | 'captured_to_start';
+  capturedPiece?: {
+    pieceId: number;
+    playerColor: string;
+  };
+}
+
+export interface LastMove {
+  moveId: string; // UUID único para identificar el movimiento
+  moves: Move[]; // Lista de todos los movimientos que ocurrieron
+  playerColor: string; // Color del jugador que hizo el movimiento
+  diceValue: number; // Valor del dado que causó estos movimientos
+  timestamp: Date; // Cuándo ocurrió el movimiento
+}
+
 export interface LudoGameState {
   gameId: string;
   players: Player[];
@@ -36,6 +56,7 @@ export interface LudoGameState {
   selectedPieceId?: number;
   decisionStartTime?: Date; // Cuándo empezó el tiempo de decisión
   decisionDuration: number; // Duración del tiempo de decisión (30000 = 30 segundos)
+  lastMove?: LastMove; // Último movimiento realizado
   lastUpdated: Date;
   version: number; // Para control de versiones en el watchdog
 }
@@ -344,8 +365,38 @@ export class LudoGameStateManager {
       return { success: false, message: 'Pieza no encontrada' };
     }
 
+    // Registrar el movimiento
+    const moves: Move[] = [];
+    const fromPosition = piece.position;
+    
     // Mover la ficha y verificar capturas
-    this.movePieceLogic(piece, gameState.diceValue, currentPlayer.color, gameState.players);
+    const capturedPieces = this.movePieceLogicWithCapture(piece, gameState.diceValue, currentPlayer.color, gameState.players);
+    
+    // Crear movimiento principal
+    const moveType = this.getMoveType(piece, fromPosition, gameState.diceValue);
+    const mainMove = this.createMove(
+      piece.id,
+      currentPlayer.color,
+      fromPosition,
+      piece.position,
+      moveType
+    );
+    moves.push(mainMove);
+
+    // Agregar movimientos de capturas
+    capturedPieces.forEach(captured => {
+      const captureMove = this.createMove(
+        captured.pieceId,
+        captured.playerColor,
+        `p${this.getPiecePosition(captured.pieceId, captured.playerColor, gameState.players)}`,
+        `sp${captured.pieceId + 1}`,
+        'captured_to_start'
+      );
+      moves.push(captureMove);
+    });
+
+    // Crear y guardar LastMove
+    gameState.lastMove = this.createLastMove(moves, currentPlayer.color, gameState.diceValue);
 
     // Verificar si ganó
     if (this.isPlayerWinner(currentPlayer)) {
@@ -480,11 +531,13 @@ export class LudoGameStateManager {
     }
   }
 
-  // Verificar capturas
-  private checkCapture(movingPiece: Piece, newPosition: number, movingPlayerColor: string, allPlayers: Player[]): void {
+  // Verificar capturas y devolver información de capturas
+  private checkCapture(movingPiece: Piece, newPosition: number, movingPlayerColor: string, allPlayers: Player[]): { pieceId: number; playerColor: string }[] {
+    const capturedPieces: { pieceId: number; playerColor: string }[] = [];
+    
     // No se puede capturar en posiciones seguras
     if (SAFE_POSITIONS.includes(newPosition)) {
-      return;
+      return capturedPieces;
     }
 
     // Buscar piezas enemigas en la misma posición
@@ -502,9 +555,146 @@ export class LudoGameStateManager {
           enemyPiece.boardPosition = undefined;
           enemyPiece.colorPathPosition = undefined;
           enemyPiece.endPathPosition = undefined;
+          
+          capturedPieces.push({
+            pieceId: enemyPiece.id,
+            playerColor: player.color
+          });
         }
       });
     });
+
+    return capturedPieces;
+  }
+
+  // Crear un movimiento
+  private createMove(
+    pieceId: number,
+    playerColor: string,
+    fromPosition: string,
+    toPosition: string,
+    moveType: Move['moveType'],
+    capturedPiece?: { pieceId: number; playerColor: string }
+  ): Move {
+    return {
+      pieceId,
+      playerColor,
+      fromPosition,
+      toPosition,
+      moveType,
+      capturedPiece
+    };
+  }
+
+  // Crear LastMove
+  private createLastMove(moves: Move[], playerColor: string, diceValue: number): LastMove {
+    return {
+      moveId: uuidv4(),
+      moves,
+      playerColor,
+      diceValue,
+      timestamp: new Date()
+    };
+  }
+
+  // Mover pieza con captura y devolver información de capturas
+  private movePieceLogicWithCapture(piece: Piece, diceValue: number, color: string, allPlayers: Player[]): { pieceId: number; playerColor: string }[] {
+    const capturedPieces: { pieceId: number; playerColor: string }[] = [];
+    
+    if (piece.isInStartZone && diceValue === 6) {
+      // Salir de start zone al tablero
+      piece.isInStartZone = false;
+      piece.isInBoard = true;
+      piece.position = `p${START_BOARD_POSITIONS[color as keyof typeof START_BOARD_POSITIONS]}`;
+      piece.boardPosition = START_BOARD_POSITIONS[color as keyof typeof START_BOARD_POSITIONS];
+      
+      // Verificar capturas en la posición de inicio
+      const captured = this.checkCapture(piece, piece.boardPosition!, color, allPlayers);
+      capturedPieces.push(...captured);
+    } else if (piece.isInBoard) {
+      // Mover en el tablero
+      const currentPos = piece.boardPosition!;
+      let newPos = (currentPos + diceValue) % BOARD_SIZE;
+      
+      // Si pasa por la posición de inicio, ir al color path
+      if (newPos === START_BOARD_POSITIONS[color as keyof typeof START_BOARD_POSITIONS]) {
+        piece.isInBoard = false;
+        piece.isInColorPath = true;
+        piece.position = 'cp0';
+        piece.colorPathPosition = 0;
+        piece.boardPosition = undefined;
+      } else {
+        piece.boardPosition = newPos;
+        piece.position = `p${newPos}`;
+        
+        // Verificar capturas
+        const captured = this.checkCapture(piece, newPos, color, allPlayers);
+        capturedPieces.push(...captured);
+      }
+    } else if (piece.isInColorPath) {
+      // Mover en color path
+      const currentPos = piece.colorPathPosition || 0;
+      const newPos = currentPos + diceValue;
+      
+      if (newPos >= COLOR_PATH_SIZE) {
+        // Ir al end path
+        piece.isInColorPath = false;
+        piece.isInEndPath = true;
+        piece.position = 'ep1';
+        piece.endPathPosition = 1;
+        piece.colorPathPosition = undefined;
+      } else {
+        piece.colorPathPosition = newPos;
+        piece.position = `cp${newPos}`;
+      }
+    } else if (piece.isInEndPath) {
+      // Mover en end path
+      const currentPos = piece.endPathPosition || 1;
+      const newPos = currentPos + diceValue;
+      
+      if (newPos > END_PATH_SIZE) {
+        // No puede moverse más
+        return capturedPieces;
+      } else {
+        piece.endPathPosition = newPos;
+        piece.position = `ep${newPos}`;
+      }
+    }
+
+    return capturedPieces;
+  }
+
+  // Obtener tipo de movimiento
+  private getMoveType(piece: Piece, fromPosition: string, diceValue: number): Move['moveType'] {
+    if (piece.isInStartZone && fromPosition.startsWith('sp')) {
+      return 'start_to_board';
+    } else if (piece.isInBoard && fromPosition.startsWith('p')) {
+      if (piece.isInColorPath) {
+        return 'board_to_color';
+      }
+      return 'board_move';
+    } else if (piece.isInColorPath && fromPosition.startsWith('cp')) {
+      if (piece.isInEndPath) {
+        return 'color_to_end';
+      }
+      return 'color_move';
+    } else if (piece.isInEndPath && fromPosition.startsWith('ep')) {
+      return 'end_move';
+    }
+    return 'board_move';
+  }
+
+  // Obtener posición de una pieza (para capturas)
+  private getPiecePosition(pieceId: number, playerColor: string, allPlayers: Player[]): number {
+    for (const player of allPlayers) {
+      if (player.color === playerColor) {
+        const piece = player.pieces.find(p => p.id === pieceId);
+        if (piece && piece.isInBoard) {
+          return piece.boardPosition!;
+        }
+      }
+    }
+    return 0; // Fallback
   }
 
   // Verificar si un jugador ganó

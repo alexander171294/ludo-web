@@ -116,7 +116,7 @@ POST /ludo/game/{gameId}/start
 POST /ludo/game/{gameId}/player/{playerId}/roll-dice
 ```
 
-#### Seleccionar pieza
+#### Seleccionar y mover pieza
 ```http
 POST /ludo/game/{gameId}/player/{playerId}/select-piece
 Content-Type: application/json
@@ -126,10 +126,7 @@ Content-Type: application/json
 }
 ```
 
-#### Mover pieza
-```http
-POST /ludo/game/{gameId}/player/{playerId}/move-piece
-```
+**Nota**: Este endpoint maneja tanto la selección como el movimiento de la pieza automáticamente. El jugador solo necesita indicar qué pieza quiere mover (por ID), y el sistema determina si es válido moverla o sacarla del start.
 
 ### 📊 Watchdog y Monitoreo
 
@@ -200,14 +197,24 @@ GET /ludo/game/{gameId}/status?playerId={playerId}
   "selectedPieceId": null,
   "playerColor": "red",
   "playerName": "Jugador 1",
-  "rollingDice": 0,
-  "rollingDiceTimeLeft": 75
+  "players": [
+    {
+      "id": "player-uuid",
+      "name": "Jugador 1",
+      "color": "red",
+      "action": "roll_dice",
+      "actionTimeLeft": 75,
+      "diceValue": 4,
+      "pieces": [...]
+    }
+  ]
 }
 ```
 
-**Campos del temporizador de dado:**
-- `rollingDice`: ID del jugador que está lanzando el dado (undefined si nadie está lanzando)
-- `rollingDiceTimeLeft`: Porcentaje de tiempo restante (0-100) solo visible para el jugador que está lanzando
+**Campos del temporizador de acción:**
+- `action`: Acción que debe realizar el jugador (`"roll_dice"`, `"rolling"`, `"select_piece"`, `"move_piece"`)
+- `actionTimeLeft`: Porcentaje de tiempo restante (0-100) para completar la acción actual
+- `diceValue`: Valor del dado obtenido (solo visible para el jugador activo)
 
 ## Flujo de Juego Típico
 
@@ -242,13 +249,11 @@ curl -X POST http://localhost:3000/ludo/game/{gameId}/start
 # Lanzar dado
 curl -X POST http://localhost:3000/ludo/game/{gameId}/player/{playerId}/roll-dice
 
-# Si hay múltiples piezas disponibles, seleccionar una
+# Seleccionar pieza (esto mueve automáticamente)
+# El sistema determina si es válido sacar del start o mover en el tablero
 curl -X POST http://localhost:3000/ludo/game/{gameId}/player/{playerId}/select-piece \
   -H "Content-Type: application/json" \
   -d '{"pieceId": 0}'
-
-# Mover la pieza
-curl -X POST http://localhost:3000/ludo/game/{gameId}/player/{playerId}/move-piece
 ```
 
 ### 4. Monitorear cambios (Polling)

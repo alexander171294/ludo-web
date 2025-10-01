@@ -125,7 +125,7 @@ export class LudoService {
       // Programar aplicación del resultado después de 5 segundos
       setTimeout(() => {
         this.applyDiceResult(gameId);
-      }, 5000); // 5 segundos para la animación
+      }, 3000); // 3 segundos para la animación
 
       // Programar verificación periódica del tiempo restante
       this.scheduleTimeoutCheck(gameId, playerId);

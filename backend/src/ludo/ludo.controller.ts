@@ -64,6 +64,23 @@ interface GameInfoResponse {
   canMovePiece?: boolean;
   selectedPieceId?: number;
   decisionTimeLeft?: number;
+  lastMove?: {
+    moveId: string;
+    moves: Array<{
+      pieceId: number;
+      playerColor: string;
+      fromPosition: string;
+      toPosition: string;
+      moveType: string;
+      capturedPiece?: {
+        pieceId: number;
+        playerColor: string;
+      };
+    }>;
+    playerColor: string;
+    diceValue: number;
+    timestamp: Date;
+  };
 }
 
 @Controller('ludo')
@@ -104,6 +121,7 @@ export class LudoController {
         decisionDuration: gameInfo.decisionDuration,
         lastUpdated: gameInfo.lastUpdated,
         version: gameInfo.version,
+        lastMove: gameInfo.lastMove,
       };
     }
 
@@ -136,6 +154,7 @@ export class LudoController {
       decisionDuration: gameInfo.decisionDuration,
       lastUpdated: gameInfo.lastUpdated,
       version: gameInfo.version,
+      lastMove: gameInfo.lastMove,
     };
   }
 
@@ -317,58 +336,4 @@ export class LudoController {
     };
   }
 
-  @Get('game/:gameId/status')
-  getGameStatus(
-    @Param('gameId') gameId: string,
-    @Query('playerId') playerId?: string,
-  ) {
-    const gameInfo = this.ludoService.getGameInfo(gameId);
-    if ('error' in gameInfo) {
-      return { error: 'Juego no encontrado' };
-    }
-
-    // Si no se proporciona playerId, devolver solo información básica
-    if (!playerId) {
-      return {
-        gamePhase: gameInfo.gamePhase,
-        gameStarted: gameInfo.gameStarted,
-        currentPlayer: gameInfo.currentPlayer,
-        diceValue: gameInfo.diceValue,
-        winner: gameInfo.winner,
-        decisionDuration: gameInfo.decisionDuration,
-      };
-    }
-
-    const baseStatus = {
-      gamePhase: gameInfo.gamePhase,
-      gameStarted: gameInfo.gameStarted,
-      currentPlayer: gameInfo.currentPlayer,
-      diceValue: gameInfo.diceValue,
-      winner: gameInfo.winner,
-    };
-
-    // Verificar si el jugador existe en el juego
-    const player = gameInfo.players.find((p) => p.id === playerId);
-    if (!player) {
-      return { ...baseStatus, error: 'Jugador no encontrado en este juego' };
-    }
-
-    // Verificar si es el turno del jugador
-    const isPlayerTurn =
-      gameInfo.currentPlayer ===
-      gameInfo.players.findIndex((p) => p.id === playerId);
-
-    // Actualizar tiempos de acción para todos los jugadores
-    this.ludoService.updatePlayerActionTimes(gameInfo);
-
-    return {
-      ...baseStatus,
-      isPlayerTurn,
-      canRollDice: isPlayerTurn ? gameInfo.canRollDice : false,
-      canMovePiece: isPlayerTurn ? gameInfo.canMovePiece : false,
-      selectedPieceId: isPlayerTurn ? gameInfo.selectedPieceId : undefined,
-      playerColor: player.color,
-      playerName: player.name,
-    };
-  }
 }
