@@ -45,7 +45,6 @@ export class LudoBoardComponent implements OnChanges {
 
   selectedChip: Chip | null = null;
   private appliedMoves: Set<string> = new Set(); // Para evitar aplicar movimientos duplicados
-  private isInitialLoad: boolean = true; // Para controlar si es la carga inicial
   boardPositions: BoardPosition[] = [];
   colorPositions: ColorPosition[] = [];
   chips: Chip[] = [];
@@ -91,14 +90,12 @@ export class LudoBoardComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['gameInfo'] && this.gameInfo) {
-      if (this.isInitialLoad) {
-        // Carga inicial/refresh: usar el estado completo del tablero
-        console.log('Carga inicial: actualizando estado completo del tablero');
-        this.updateChipsFromGameState();
-        this.isInitialLoad = false;
-      } else {
-        // Durante el juego: solo procesar movimientos con animación
-        console.log('Durante el juego: procesando solo movimientos con animación');
+      // Siempre actualizar el estado completo del tablero
+      console.log('Actualizando estado del tablero');
+      this.updateChipsFromGameState();
+
+      // Si hay un lastMove, procesarlo con animación
+      if (this.gameInfo.lastMove) {
         this.processLastMove();
       }
     }
@@ -125,8 +122,9 @@ export class LudoBoardComponent implements OnChanges {
       return false;
     }
 
-    // Activar piezas que están en la zona de inicio O en el tablero
-    return chip.isInStartZone || chip.isInBoard;
+    // Activar piezas que están en la zona de inicio, en el tablero O en el camino de color
+    // No activar piezas que ya están en la zona final
+    return (chip.isInStartZone || chip.isInBoard || chip.isInColorPath) && !chip.isInEndPath;
   }
 
   /**
@@ -153,11 +151,23 @@ export class LudoBoardComponent implements OnChanges {
   }
 
   /**
+   * Convierte una posición de color del backend (cp1, cp2, etc.) al formato del frontend
+   * @param position - Posición del backend (ej: "cp1", "cp2")
+   * @param playerColor - Color del jugador
+   * @returns Posición en formato del frontend (ej: "red-cp1", "blue-cp2")
+   */
+  private convertColorPathPosition(position: string, playerColor: string): string {
+    if (position.startsWith('cp')) {
+      return `${playerColor}-${position}`;
+    }
+    return position;
+  }
+
+  /**
    * Procesa el último movimiento si es nuevo
    */
   private async processLastMove() {
     if (!this.gameInfo?.lastMove) {
-      console.log('No hay lastMove en gameInfo');
       return;
     }
 
@@ -166,12 +176,10 @@ export class LudoBoardComponent implements OnChanges {
 
     // Verificar si ya se aplicó este movimiento
     if (this.appliedMoves.has(moveId)) {
-      console.log(`Movimiento ${moveId} ya fue aplicado, saltando...`);
       return;
     }
 
-    console.log(`Aplicando nuevo movimiento con animación: ${moveId}`);
-    console.log('Detalles del movimiento:', lastMove);
+    console.log(`Aplicando movimiento: ${moveId}`);
 
     // Aplicar cada movimiento individual con animación
     for (const move of lastMove.moves) {
@@ -180,7 +188,6 @@ export class LudoBoardComponent implements OnChanges {
 
     // Marcar el movimiento como aplicado
     this.appliedMoves.add(moveId);
-    console.log(`Movimiento ${moveId} completado con animación`);
   }
 
   /**
@@ -188,31 +195,17 @@ export class LudoBoardComponent implements OnChanges {
    * @param move - El movimiento a aplicar
    */
   private async applyMove(move: Move) {
-    console.log(`Aplicando movimiento con animación: ${move.pieceId} de ${move.fromPosition} a ${move.toPosition}`);
-
     // Buscar el chip correspondiente
     const chipId = `${move.playerColor}-${move.pieceId}`;
-    console.log(`Buscando chip con ID: ${chipId}`);
     const chip = this.findChipById(chipId);
 
     if (!chip) {
       console.error(`No se encontró el chip ${chipId}`);
-      console.log('Chips disponibles en slots de inicio:');
-      Object.keys(this.startSlots).forEach(color => {
-        this.startSlots[color].forEach((slot, index) => {
-          if (slot.chip) {
-            console.log(`  ${color}-${index}: ${slot.chip.id}`);
-          }
-        });
-      });
       return;
     }
 
-    console.log(`Chip encontrado:`, chip);
-
     // Crear el path para la animación
     const path = this.createPathForMove(move.fromPosition, move.toPosition, move.moveType);
-    console.log(`Path creado para animación:`, path);
 
     // Animar el movimiento casillero por casillero
     await this.moveChipAlongPath(chip, path);
@@ -238,8 +231,6 @@ export class LudoBoardComponent implements OnChanges {
         chip.isInEndPath = true;
         break;
     }
-
-    console.log(`Movimiento completado:`, chip);
   }
 
   /**
@@ -370,15 +361,12 @@ export class LudoBoardComponent implements OnChanges {
    * @param position - La nueva posición
    */
   private placeChipInPosition(chip: Chip, position: string) {
-    console.log(`Colocando chip ${chip.id} en posición ${position}`);
-
     // Colocar en slots de inicio
     if (position.startsWith('sp')) {
       const slotNumber = parseInt(position.replace('sp', '')) - 1;
       const color = chip.color;
       if (this.startSlots[color] && this.startSlots[color][slotNumber]) {
         this.startSlots[color][slotNumber].chip = chip;
-        console.log(`Chip colocado en slot de inicio ${color}-${slotNumber}`);
       }
       return;
     }
@@ -386,14 +374,9 @@ export class LudoBoardComponent implements OnChanges {
     // Colocar en posiciones del tablero
     if (position.startsWith('p')) {
       const boardPos = parseInt(position.replace('p', ''));
-      console.log(`Buscando posición del tablero ${boardPos}`);
       const boardPosition = this.boardPositions.find(pos => pos.position === boardPos);
       if (boardPosition) {
         boardPosition.chips.push(chip);
-        console.log(`Chip colocado en posición del tablero ${boardPos}. Total chips: ${boardPosition.chips.length}`);
-        console.log(`Chips en posición ${boardPos}:`, boardPosition.chips.map(c => c.id));
-      } else {
-        console.error(`No se encontró la posición del tablero ${boardPos}`);
       }
       return;
     }
@@ -402,7 +385,6 @@ export class LudoBoardComponent implements OnChanges {
     const colorPosition = this.colorPositions.find(pos => pos.position === position);
     if (colorPosition) {
       colorPosition.chips.push(chip);
-      console.log(`Chip colocado en posición de color ${position}`);
     }
   }
 
@@ -410,8 +392,6 @@ export class LudoBoardComponent implements OnChanges {
     if (!this.gameInfo) return;
 
     console.log('Actualizando estado del tablero desde gameInfo');
-    console.log('Estado actual antes de actualizar:');
-    console.log('Posición 14 chips:', this.getChipsAtPosition(14));
 
     // Limpiar todas las posiciones
     this.clearAllPositions();
@@ -423,8 +403,7 @@ export class LudoBoardComponent implements OnChanges {
       });
     });
 
-    console.log('Estado después de actualizar:');
-    console.log('Posición 14 chips:', this.getChipsAtPosition(14));
+    console.log('Estado del tablero actualizado correctamente');
   }
 
   clearAllPositions() {
@@ -441,9 +420,6 @@ export class LudoBoardComponent implements OnChanges {
   }
 
   placePieceOnBoard(playerColor: string, piece: Piece) {
-    console.log(`Colocando pieza ${playerColor}-${piece.id} en posición ${piece.position}`);
-    console.log(`Propiedades: isInStartZone=${piece.isInStartZone}, isInBoard=${piece.isInBoard}, isInColorPath=${piece.isInColorPath}, isInEndPath=${piece.isInEndPath}`);
-
     const chip: Chip = {
       id: `${playerColor}-${piece.id}`,
       color: playerColor as 'red' | 'blue' | 'green' | 'yellow',
@@ -460,32 +436,25 @@ export class LudoBoardComponent implements OnChanges {
     if (piece.isInStartZone) {
       // Colocar en slot de inicio
       this.startSlots[playerColor][piece.id].chip = chip;
-      console.log(`Pieza colocada en slot de inicio ${playerColor}-${piece.id}`);
     } else if (piece.isInBoard) {
       // Colocar en el tablero principal
       const boardPosition = parseInt(piece.position.replace('p', ''));
-      console.log(`Buscando posición del tablero ${boardPosition}`);
       const boardPos = this.boardPositions.find(pos => pos.position === boardPosition);
       if (boardPos) {
         boardPos.chips.push(chip);
-        console.log(`Pieza colocada en posición del tablero ${boardPosition}. Total chips: ${boardPos.chips.length}`);
-        console.log(`Chips en posición ${boardPosition}:`, boardPos.chips.map(c => c.id));
-      } else {
-        console.error(`No se encontró la posición del tablero ${boardPosition}`);
       }
     } else if (piece.isInColorPath) {
-      // Colocar en el camino de color
-      const colorPos = this.colorPositions.find(pos => pos.position === piece.position);
+      // Colocar en el camino de color - convertir cp1, cp2, etc. al formato correcto
+      const colorPosition = this.convertColorPathPosition(piece.position, playerColor);
+      const colorPos = this.colorPositions.find(pos => pos.position === colorPosition);
       if (colorPos) {
         colorPos.chips.push(chip);
-        console.log(`Pieza colocada en camino de color ${piece.position}`);
       }
     } else if (piece.isInEndPath) {
       // Colocar en la zona final
       const endPos = this.colorPositions.find(pos => pos.position === `${playerColor}-end`);
       if (endPos) {
         endPos.chips.push(chip);
-        console.log(`Pieza colocada en zona final ${playerColor}-end`);
       }
     }
   }
@@ -732,9 +701,12 @@ export class LudoBoardComponent implements OnChanges {
   }
 
   async moveChipAlongPath(chip: Chip, path: (number | string)[]) {
-    for (const position of path) {
-      await this.moveChipToPosition(chip, position);
-    }
+    // Solo mover si hay un path válido
+    if (path.length === 0) return;
+
+    // Mover directamente a la posición final para evitar duplicaciones
+    const finalPosition = path[path.length - 1];
+    await this.moveChipToPosition(chip, finalPosition);
 
     // Deseleccionar ficha después del movimiento
     chip.selected = false;
@@ -749,15 +721,14 @@ export class LudoBoardComponent implements OnChanges {
       // Actualizar posición de la ficha
       chip.position = newPosition;
       chip.isInStartZone = newPosition === -1;
-      // Solo marcar como end zone si está en la posición de end específica
       chip.isInEndPath = typeof newPosition === 'string' &&
                         newPosition === this.END_ZONE_POSITIONS[chip.color];
 
       // Colocar ficha en nueva posición
       this.placeChipOnBoard(chip, newPosition);
 
-      // Esperar 200ms antes del siguiente movimiento
-      setTimeout(resolve, 200);
+      // Esperar 100ms para la animación
+      setTimeout(resolve, 100);
     });
   }
 

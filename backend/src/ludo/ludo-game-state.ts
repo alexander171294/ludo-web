@@ -78,10 +78,10 @@ const END_PATH_SIZE = 4; // ep1 a ep4
 
 // Posiciones de entrada al color path para cada color
 const COLOR_PATH_ENTRY_POSITIONS = {
-  red: 50, // posición 50 del tablero
-  blue: 11, // posición 11 del tablero
-  yellow: 24, // posición 24 del tablero
-  green: 37, // posición 37 del tablero
+  red: 51, // posición 50 del tablero
+  blue: 12, // posición 11 del tablero
+  yellow: 25, // posición 24 del tablero
+  green: 38, // posición 37 del tablero
 };
 
 // Posiciones de inicio en el tablero para cada color
@@ -457,7 +457,9 @@ export class LudoGameStateManager {
     if (piece.isInColorPath) {
       const currentPos = piece.colorPathPosition || 0;
       const newPos = currentPos + diceValue;
-      return newPos <= COLOR_PATH_SIZE - 1; // cp0 a cp4
+      // Permitir movimientos que lleven al end path (newPos >= COLOR_PATH_SIZE)
+      // o que se mantengan dentro del color path (newPos < COLOR_PATH_SIZE)
+      return newPos <= COLOR_PATH_SIZE; // cp0 a cp4, o cp5 que va a ep1
     }
 
     // Si está en el tablero, puede moverse normalmente
@@ -614,20 +616,34 @@ export class LudoGameStateManager {
     } else if (piece.isInBoard) {
       // Mover en el tablero
       const currentPos = piece.boardPosition!;
-      let newPos = (currentPos + diceValue) % BOARD_SIZE;
+      const newPos = currentPos + diceValue;
+      const entryPos = COLOR_PATH_ENTRY_POSITIONS[color as keyof typeof COLOR_PATH_ENTRY_POSITIONS];
       
-      // Si pasa por la posición de inicio, ir al color path
-      if (newPos === START_BOARD_POSITIONS[color as keyof typeof START_BOARD_POSITIONS]) {
-        piece.isInBoard = false;
-        piece.isInColorPath = true;
-        piece.position = 'cp0';
-        piece.colorPathPosition = 0;
-        piece.boardPosition = undefined;
+      if (newPos >= entryPos) {
+        // Entrar al color path
+        const colorPathPos = newPos - entryPos;
+        if (colorPathPos < COLOR_PATH_SIZE) {
+          piece.isInBoard = false;
+          piece.isInColorPath = true;
+          piece.position = `cp${colorPathPos}`;
+          piece.colorPathPosition = colorPathPos;
+          piece.boardPosition = undefined;
+        } else {
+          // Pasar de largo, continuar en el tablero
+          const finalPos = newPos % BOARD_SIZE;
+          piece.position = `p${finalPos}`;
+          piece.boardPosition = finalPos;
+
+          // Verificar captura en el tablero
+          const captured = this.checkCapture(piece, finalPos, color, allPlayers);
+          capturedPieces.push(...captured);
+        }
       } else {
-        piece.boardPosition = newPos;
+        // Continuar en el tablero
         piece.position = `p${newPos}`;
-        
-        // Verificar capturas
+        piece.boardPosition = newPos;
+
+        // Verificar captura en el tablero
         const captured = this.checkCapture(piece, newPos, color, allPlayers);
         capturedPieces.push(...captured);
       }
@@ -640,7 +656,7 @@ export class LudoGameStateManager {
         // Ir al end path
         piece.isInColorPath = false;
         piece.isInEndPath = true;
-        piece.position = 'ep1';
+        piece.position = 'ep';
         piece.endPathPosition = 1;
         piece.colorPathPosition = undefined;
       } else {
@@ -657,7 +673,7 @@ export class LudoGameStateManager {
         return capturedPieces;
       } else {
         piece.endPathPosition = newPos;
-        piece.position = `ep${newPos}`;
+        piece.position = `ep`;
       }
     }
 
