@@ -89,6 +89,7 @@
         *ngFor="let chip of getChipsAtPosition(11)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -100,6 +101,7 @@
         *ngFor="let chip of getChipsAtPosition(12)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -110,6 +112,7 @@
         *ngFor="let chip of getChipsAtPosition(13)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -120,6 +123,7 @@
         *ngFor="let chip of getChipsAtPosition(10)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -130,6 +134,7 @@
         *ngFor="let chip of getChipsAtColorPosition('blue-cp1')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -140,6 +145,7 @@
         *ngFor="let chip of getChipsAtPosition(14)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -151,6 +157,7 @@
         *ngFor="let chip of getChipsAtPosition(9)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -161,6 +168,7 @@
         *ngFor="let chip of getChipsAtColorPosition('blue-cp2')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -171,6 +179,7 @@
         *ngFor="let chip of getChipsAtPosition(15)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -181,6 +190,7 @@
         *ngFor="let chip of getChipsAtPosition(8)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -191,6 +201,7 @@
         *ngFor="let chip of getChipsAtColorPosition('blue-cp3')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -201,6 +212,7 @@
         *ngFor="let chip of getChipsAtPosition(16)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -211,6 +223,7 @@
         *ngFor="let chip of getChipsAtPosition(7)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -221,6 +234,7 @@
         *ngFor="let chip of getChipsAtColorPosition('blue-cp4')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -231,6 +245,7 @@
         *ngFor="let chip of getChipsAtPosition(17)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -241,6 +256,7 @@
         *ngFor="let chip of getChipsAtPosition(6)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -251,6 +267,7 @@
         *ngFor="let chip of getChipsAtColorPosition('blue-cp5')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -261,6 +278,7 @@
         *ngFor="let chip of getChipsAtPosition(18)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -272,6 +290,7 @@
         *ngFor="let chip of getChipsAtPosition(0)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -282,6 +301,7 @@
         *ngFor="let chip of getChipsAtPosition(1)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -292,6 +312,7 @@
         *ngFor="let chip of getChipsAtPosition(2)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -302,6 +323,7 @@
         *ngFor="let chip of getChipsAtPosition(3)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -312,6 +334,7 @@
         *ngFor="let chip of getChipsAtPosition(4)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -322,6 +345,7 @@
         *ngFor="let chip of getChipsAtPosition(5)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -333,6 +357,7 @@
         *ngFor="let chip of getChipsAtPosition(19)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -343,6 +368,7 @@
         *ngFor="let chip of getChipsAtPosition(20)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -353,6 +379,7 @@
         *ngFor="let chip of getChipsAtPosition(21)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -364,6 +391,7 @@
         *ngFor="let chip of getChipsAtPosition(22)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -374,6 +402,7 @@
         *ngFor="let chip of getChipsAtPosition(23)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -384,6 +413,7 @@
         *ngFor="let chip of getChipsAtPosition(24)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -396,6 +426,7 @@
         *ngFor="let chip of getChipsAtPosition(51)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -406,6 +437,7 @@
         *ngFor="let chip of getChipsAtColorPosition('red-cp1')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -416,6 +448,7 @@
         *ngFor="let chip of getChipsAtColorPosition('red-cp2')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -426,6 +459,7 @@
         *ngFor="let chip of getChipsAtColorPosition('red-cp3')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -436,6 +470,7 @@
         *ngFor="let chip of getChipsAtColorPosition('red-cp4')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -446,6 +481,7 @@
         *ngFor="let chip of getChipsAtColorPosition('red-cp5')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -457,6 +493,7 @@
         *ngFor="let chip of getChipsAtColorPosition('yellow-cp5')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -467,6 +504,7 @@
         *ngFor="let chip of getChipsAtColorPosition('yellow-cp4')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -477,6 +515,7 @@
         *ngFor="let chip of getChipsAtColorPosition('yellow-cp3')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -487,6 +526,7 @@
         *ngFor="let chip of getChipsAtColorPosition('yellow-cp2')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -497,6 +537,7 @@
         *ngFor="let chip of getChipsAtColorPosition('yellow-cp1')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -508,6 +549,7 @@
         *ngFor="let chip of getChipsAtPosition(25)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -519,6 +561,7 @@
         *ngFor="let chip of getChipsAtPosition(50)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -529,6 +572,7 @@
         *ngFor="let chip of getChipsAtPosition(49)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -540,6 +584,7 @@
         *ngFor="let chip of getChipsAtPosition(48)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -550,6 +595,7 @@
         *ngFor="let chip of getChipsAtPosition(47)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -560,6 +606,7 @@
         *ngFor="let chip of getChipsAtPosition(46)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -570,6 +617,7 @@
         *ngFor="let chip of getChipsAtPosition(45)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -581,6 +629,7 @@
         *ngFor="let chip of getChipsAtPosition(31)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -591,6 +640,7 @@
         *ngFor="let chip of getChipsAtPosition(30)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -601,6 +651,7 @@
         *ngFor="let chip of getChipsAtPosition(29)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -611,6 +662,7 @@
         *ngFor="let chip of getChipsAtPosition(28)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -621,6 +673,7 @@
         *ngFor="let chip of getChipsAtPosition(27)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -631,6 +684,7 @@
         *ngFor="let chip of getChipsAtPosition(26)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -642,6 +696,7 @@
         *ngFor="let chip of getChipsAtPosition(44)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -652,6 +707,7 @@
         *ngFor="let chip of getChipsAtColorPosition('green-cp5')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -662,6 +718,7 @@
         *ngFor="let chip of getChipsAtPosition(32)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -672,6 +729,7 @@
         *ngFor="let chip of getChipsAtPosition(43)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -682,6 +740,7 @@
         *ngFor="let chip of getChipsAtColorPosition('green-cp4')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -692,6 +751,7 @@
         *ngFor="let chip of getChipsAtPosition(33)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -703,6 +763,7 @@
         *ngFor="let chip of getChipsAtPosition(42)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -713,6 +774,7 @@
         *ngFor="let chip of getChipsAtColorPosition('green-cp3')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -723,6 +785,7 @@
         *ngFor="let chip of getChipsAtPosition(34)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -733,6 +796,7 @@
         *ngFor="let chip of getChipsAtPosition(41)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -743,6 +807,7 @@
         *ngFor="let chip of getChipsAtColorPosition('green-cp2')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -754,6 +819,7 @@
         *ngFor="let chip of getChipsAtPosition(35)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -765,6 +831,7 @@
         *ngFor="let chip of getChipsAtPosition(40)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -775,6 +842,7 @@
         *ngFor="let chip of getChipsAtColorPosition('green-cp1')"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -785,6 +853,7 @@
         *ngFor="let chip of getChipsAtPosition(36)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -795,6 +864,7 @@
         *ngFor="let chip of getChipsAtPosition(39)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -806,6 +876,7 @@
         *ngFor="let chip of getChipsAtPosition(38)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>
@@ -816,6 +887,7 @@
         *ngFor="let chip of getChipsAtPosition(37)"
         [color]="chip.color"
         [selected]="chip.selected"
+        [isActive]="isChipActive(chip)"
         (click)="onChipClick(chip); $event.stopPropagation()">
       </app-chip>
     </div>

@@ -232,8 +232,8 @@ export class LudoGameStateManager {
       return { success: false, message: 'No puedes lanzar el dado en este momento' };
     }
 
-    // Generar valor del dado inmediatamente
-    const diceValue = Math.floor(Math.random() * 6) + 1;
+    // Generar valor del dado inmediatamente (generamos entre 3 y 6 para pruebas)
+    const diceValue = Math.floor(Math.random() * 2) + 5;
     gameState.diceValue = diceValue;
     gameState.canRollDice = false;
 

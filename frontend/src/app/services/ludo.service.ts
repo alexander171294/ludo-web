@@ -39,6 +39,22 @@ export interface Player {
   diceValue?: number;
 }
 
+export interface Move {
+  pieceId: number;
+  playerColor: string;
+  fromPosition: string;
+  toPosition: string;
+  moveType: string;
+}
+
+export interface LastMove {
+  moveId: string;
+  moves: Move[];
+  playerColor: string;
+  diceValue: number;
+  timestamp: string;
+}
+
 export interface RoomInfo {
   gameId: string;
   players: Player[];
@@ -54,6 +70,7 @@ export interface RoomInfo {
   decisionDuration: number;
   lastUpdated: string;
   version: number;
+  lastMove?: LastMove;
 }
 
 export interface AvailableColorsResponse {
