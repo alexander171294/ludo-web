@@ -78,10 +78,10 @@ const END_PATH_SIZE = 4; // ep1 a ep4
 
 // Posiciones de entrada al color path para cada color
 const COLOR_PATH_ENTRY_POSITIONS = {
-  red: 51, // posición 50 del tablero
-  blue: 12, // posición 11 del tablero
-  yellow: 25, // posición 24 del tablero
-  green: 38, // posición 37 del tablero
+  red: 51, // posición 51 del tablero
+  blue: 12, // posición 12 del tablero
+  yellow: 25, // posición 25 del tablero
+  green: 38, // posición 38 del tablero
 };
 
 // Posiciones de inicio en el tablero para cada color
@@ -212,6 +212,7 @@ export class LudoGameStateManager {
     return { success: true, message: 'Juego iniciado' };
   }
 
+  fakeDiceCount = 0;
   // Lanzar dado
   rollDice(gameId: string, playerId: string): { success: boolean; message: string; diceValue?: number } {
     const gameState = this.gameStates.get(gameId);
@@ -232,8 +233,22 @@ export class LudoGameStateManager {
       return { success: false, message: 'No puedes lanzar el dado en este momento' };
     }
 
+    let diceValue = Math.floor(Math.random() * 6) + 1;
+
+    /*
+    if (this.fakeDiceCount % 2 === 0) {
+      diceValue = 6;
+    } else {
+      diceValue = 1;
+    }
+    this.fakeDiceCount++;
+    */
+
     // Generar valor del dado inmediatamente (generamos entre 3 y 6 para pruebas)
-    const diceValue = Math.floor(Math.random() * 2) + 5;
+    if (diceValue === 7) {
+      // lo cargamos un poco para que salgan 6 mas veces
+      diceValue = 6;
+    }
     gameState.diceValue = diceValue;
     gameState.canRollDice = false;
 
@@ -443,9 +458,9 @@ export class LudoGameStateManager {
 
   // Verificar si una ficha puede moverse
   private canMovePiece(piece: Piece, diceValue: number): boolean {
-    // Si está en start zone, solo puede salir con 6
+    // Si está en start zone, puede salir con 1 o 6
     if (piece.isInStartZone) {
-      return diceValue === 6;
+      return diceValue === 1 || diceValue === 6;
     }
 
     // Si está en end path, no puede moverse más
@@ -472,7 +487,7 @@ export class LudoGameStateManager {
 
   // Mover una ficha
   private movePieceLogic(piece: Piece, diceValue: number, color: string, allPlayers: Player[]): void {
-    if (piece.isInStartZone && diceValue === 6) {
+    if (piece.isInStartZone && (diceValue === 1 || diceValue === 6)) {
       // Salir de start zone al tablero
       piece.isInStartZone = false;
       piece.isInBoard = true;
@@ -484,38 +499,76 @@ export class LudoGameStateManager {
       const newPos = currentPos + diceValue;
       const entryPos = COLOR_PATH_ENTRY_POSITIONS[color as keyof typeof COLOR_PATH_ENTRY_POSITIONS];
 
-      if (newPos > entryPos) {
-        // Entrar al color path
-        const colorPathPos = newPos - entryPos;
-        if (colorPathPos <= COLOR_PATH_SIZE) {
-          piece.isInBoard = false;
-          piece.isInColorPath = true;
-          piece.position = `cp${colorPathPos}`;
-          piece.colorPathPosition = colorPathPos;
-          piece.boardPosition = undefined;
+      // Verificar si la pieza debe dar la vuelta al tablero
+      // Si la entry position es menor que la posición actual, la pieza debe dar la vuelta
+      const needsWrapping = entryPos < currentPos;
+      
+      if (needsWrapping) {
+        // La pieza debe dar la vuelta al tablero antes de llegar a la entry position
+        if (newPos >= BOARD_SIZE) {
+          // Dar la vuelta al tablero
+          const wrappedPos = newPos % BOARD_SIZE;
+          if (wrappedPos === entryPos) {
+            // Llegar exactamente a la entry position después de dar la vuelta
+            piece.position = `p${wrappedPos}`;
+            piece.boardPosition = wrappedPos;
+            this.checkCapture(piece, wrappedPos, color, allPlayers);
+          } else if (wrappedPos > entryPos) {
+            // Entrar al color path después de dar la vuelta
+            const colorPathPos = wrappedPos - entryPos;
+            if (colorPathPos <= COLOR_PATH_SIZE) {
+              piece.isInBoard = false;
+              piece.isInColorPath = true;
+              piece.position = `cp${colorPathPos}`;
+              piece.colorPathPosition = colorPathPos;
+              piece.boardPosition = undefined;
+            } else {
+              // Pasar de largo, continuar en el tablero
+              piece.position = `p${wrappedPos}`;
+              piece.boardPosition = wrappedPos;
+              this.checkCapture(piece, wrappedPos, color, allPlayers);
+            }
+          } else {
+            // Continuar en el tablero después de dar la vuelta
+            piece.position = `p${wrappedPos}`;
+            piece.boardPosition = wrappedPos;
+            this.checkCapture(piece, wrappedPos, color, allPlayers);
+          }
         } else {
-          // Pasar de largo, continuar en el tablero
-          const finalPos = newPos % BOARD_SIZE;
-          piece.position = `p${finalPos}`;
-          piece.boardPosition = finalPos;
-
-          // Verificar captura en el tablero
-          this.checkCapture(piece, finalPos, color, allPlayers);
+          // Aún no ha dado la vuelta, continuar en el tablero
+          piece.position = `p${newPos}`;
+          piece.boardPosition = newPos;
+          this.checkCapture(piece, newPos, color, allPlayers);
         }
-      } else if (newPos === entryPos) {
-        // Llegar exactamente a la entry position, quedarse en el tablero
-        piece.position = `p${newPos}`;
-        piece.boardPosition = newPos;
-
-        // Verificar captura en el tablero
-        this.checkCapture(piece, newPos, color, allPlayers);
       } else {
-        // Continuar en el tablero
-        piece.position = `p${newPos}`;
-        piece.boardPosition = newPos;
-
-        // Verificar captura en el tablero
-        this.checkCapture(piece, newPos, color, allPlayers);
+        // La pieza no necesita dar la vuelta, lógica normal
+        if (newPos > entryPos) {
+          // Entrar al color path
+          const colorPathPos = newPos - entryPos;
+          if (colorPathPos <= COLOR_PATH_SIZE) {
+            piece.isInBoard = false;
+            piece.isInColorPath = true;
+            piece.position = `cp${colorPathPos}`;
+            piece.colorPathPosition = colorPathPos;
+            piece.boardPosition = undefined;
+          } else {
+            // Pasar de largo, continuar en el tablero
+            const finalPos = newPos % BOARD_SIZE;
+            piece.position = `p${finalPos}`;
+            piece.boardPosition = finalPos;
+            this.checkCapture(piece, finalPos, color, allPlayers);
+          }
+        } else if (newPos === entryPos) {
+          // Llegar exactamente a la entry position, quedarse en el tablero
+          piece.position = `p${newPos}`;
+          piece.boardPosition = newPos;
+          this.checkCapture(piece, newPos, color, allPlayers);
+        } else {
+          // Continuar en el tablero
+          piece.position = `p${newPos}`;
+          piece.boardPosition = newPos;
+          this.checkCapture(piece, newPos, color, allPlayers);
+        }
       }
     } else if (piece.isInColorPath) {
       // Mover en el color path
@@ -610,7 +663,7 @@ export class LudoGameStateManager {
   private movePieceLogicWithCapture(piece: Piece, diceValue: number, color: string, allPlayers: Player[]): { pieceId: number; playerColor: string }[] {
     const capturedPieces: { pieceId: number; playerColor: string }[] = [];
     
-    if (piece.isInStartZone && diceValue === 6) {
+    if (piece.isInStartZone && (diceValue === 1 || diceValue === 6)) {
       // Salir de start zone al tablero
       piece.isInStartZone = false;
       piece.isInBoard = true;
@@ -626,41 +679,83 @@ export class LudoGameStateManager {
       const newPos = currentPos + diceValue;
       const entryPos = COLOR_PATH_ENTRY_POSITIONS[color as keyof typeof COLOR_PATH_ENTRY_POSITIONS];
       
-      if (newPos > entryPos) {
-        // Entrar al color path
-        const colorPathPos = newPos - entryPos;
-        if (colorPathPos <= COLOR_PATH_SIZE) {
-          piece.isInBoard = false;
-          piece.isInColorPath = true;
-          piece.position = `cp${colorPathPos}`;
-          piece.colorPathPosition = colorPathPos;
-          piece.boardPosition = undefined;
+      // Verificar si la pieza debe dar la vuelta al tablero
+      // Si la entry position es menor que la posición actual, la pieza debe dar la vuelta
+      const needsWrapping = entryPos < currentPos;
+      
+      if (needsWrapping) {
+        // La pieza debe dar la vuelta al tablero antes de llegar a la entry position
+        if (newPos >= BOARD_SIZE) {
+          // Dar la vuelta al tablero
+          const wrappedPos = newPos % BOARD_SIZE;
+          if (wrappedPos === entryPos) {
+            // Llegar exactamente a la entry position después de dar la vuelta
+            piece.position = `p${wrappedPos}`;
+            piece.boardPosition = wrappedPos;
+            const captured = this.checkCapture(piece, wrappedPos, color, allPlayers);
+            capturedPieces.push(...captured);
+          } else if (wrappedPos > entryPos) {
+            // Entrar al color path después de dar la vuelta
+            const colorPathPos = wrappedPos - entryPos;
+            if (colorPathPos <= COLOR_PATH_SIZE) {
+              piece.isInBoard = false;
+              piece.isInColorPath = true;
+              piece.position = `cp${colorPathPos}`;
+              piece.colorPathPosition = colorPathPos;
+              piece.boardPosition = undefined;
+            } else {
+              // Pasar de largo, continuar en el tablero
+              piece.position = `p${wrappedPos}`;
+              piece.boardPosition = wrappedPos;
+              const captured = this.checkCapture(piece, wrappedPos, color, allPlayers);
+              capturedPieces.push(...captured);
+            }
+          } else {
+            // Continuar en el tablero después de dar la vuelta
+            piece.position = `p${wrappedPos}`;
+            piece.boardPosition = wrappedPos;
+            const captured = this.checkCapture(piece, wrappedPos, color, allPlayers);
+            capturedPieces.push(...captured);
+          }
         } else {
-          // Pasar de largo, continuar en el tablero
-          const finalPos = newPos % BOARD_SIZE;
-          piece.position = `p${finalPos}`;
-          piece.boardPosition = finalPos;
-
-          // Verificar captura en el tablero
-          const captured = this.checkCapture(piece, finalPos, color, allPlayers);
+          // Aún no ha dado la vuelta, continuar en el tablero
+          piece.position = `p${newPos}`;
+          piece.boardPosition = newPos;
+          const captured = this.checkCapture(piece, newPos, color, allPlayers);
           capturedPieces.push(...captured);
         }
-      } else if (newPos === entryPos) {
-        // Llegar exactamente a la entry position, quedarse en el tablero
-        piece.position = `p${newPos}`;
-        piece.boardPosition = newPos;
-
-        // Verificar captura en el tablero
-        const captured = this.checkCapture(piece, newPos, color, allPlayers);
-        capturedPieces.push(...captured);
       } else {
-        // Continuar en el tablero
-        piece.position = `p${newPos}`;
-        piece.boardPosition = newPos;
-
-        // Verificar captura en el tablero
-        const captured = this.checkCapture(piece, newPos, color, allPlayers);
-        capturedPieces.push(...captured);
+        // La pieza no necesita dar la vuelta, lógica normal
+        if (newPos > entryPos) {
+          // Entrar al color path
+          const colorPathPos = newPos - entryPos;
+          if (colorPathPos <= COLOR_PATH_SIZE) {
+            piece.isInBoard = false;
+            piece.isInColorPath = true;
+            piece.position = `cp${colorPathPos}`;
+            piece.colorPathPosition = colorPathPos;
+            piece.boardPosition = undefined;
+          } else {
+            // Pasar de largo, continuar en el tablero
+            const finalPos = newPos % BOARD_SIZE;
+            piece.position = `p${finalPos}`;
+            piece.boardPosition = finalPos;
+            const captured = this.checkCapture(piece, finalPos, color, allPlayers);
+            capturedPieces.push(...captured);
+          }
+        } else if (newPos === entryPos) {
+          // Llegar exactamente a la entry position, quedarse en el tablero
+          piece.position = `p${newPos}`;
+          piece.boardPosition = newPos;
+          const captured = this.checkCapture(piece, newPos, color, allPlayers);
+          capturedPieces.push(...captured);
+        } else {
+          // Continuar en el tablero
+          piece.position = `p${newPos}`;
+          piece.boardPosition = newPos;
+          const captured = this.checkCapture(piece, newPos, color, allPlayers);
+          capturedPieces.push(...captured);
+        }
       }
     } else if (piece.isInColorPath) {
       // Mover en color path
