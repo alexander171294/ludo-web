@@ -457,9 +457,9 @@ export class LudoGameStateManager {
     if (piece.isInColorPath) {
       const currentPos = piece.colorPathPosition || 0;
       const newPos = currentPos + diceValue;
-      // Permitir movimientos que lleven al end path (newPos > COLOR_PATH_SIZE)
-      // o que se mantengan dentro del color path (newPos <= COLOR_PATH_SIZE)
-      return newPos <= COLOR_PATH_SIZE; // cp1 a cp5, o cp6 que va a ep1
+      // Permitir movimientos que se mantengan dentro del color path (newPos <= COLOR_PATH_SIZE)
+      // o que lleven al end path (newPos > COLOR_PATH_SIZE)
+      return newPos <= COLOR_PATH_SIZE + 1; // cp1 a cp5, o cp6 que va a ep1
     }
 
     // Si está en el tablero, puede moverse normalmente

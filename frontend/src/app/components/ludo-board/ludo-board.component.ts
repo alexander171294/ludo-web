@@ -151,14 +151,17 @@ export class LudoBoardComponent implements OnChanges {
   }
 
   /**
-   * Convierte una posición de color del backend (cp1, cp2, etc.) al formato del frontend
-   * @param position - Posición del backend (ej: "cp1", "cp2")
+   * Convierte una posición de color del backend (cp1, cp2, ep) al formato del frontend
+   * @param position - Posición del backend (ej: "cp1", "cp2", "ep")
    * @param playerColor - Color del jugador
-   * @returns Posición en formato del frontend (ej: "red-cp1", "blue-cp2")
+   * @returns Posición en formato del frontend (ej: "red-cp1", "blue-cp2", "red-end")
    */
   private convertColorPathPosition(position: string, playerColor: string): string {
     if (position.startsWith('cp')) {
       return `${playerColor}-${position}`;
+    }
+    if (position === 'ep') {
+      return `${playerColor}-end`;
     }
     return position;
   }
@@ -451,8 +454,9 @@ export class LudoBoardComponent implements OnChanges {
         colorPos.chips.push(chip);
       }
     } else if (piece.isInEndPath) {
-      // Colocar en la zona final
-      const endPos = this.colorPositions.find(pos => pos.position === `${playerColor}-end`);
+      // Colocar en la zona final - convertir ep al formato correcto
+      const endPosition = this.convertColorPathPosition(piece.position, playerColor);
+      const endPos = this.colorPositions.find(pos => pos.position === endPosition);
       if (endPos) {
         endPos.chips.push(chip);
       }
@@ -772,7 +776,8 @@ export class LudoBoardComponent implements OnChanges {
   }
 
   getChipsInEndZone(color: 'red' | 'blue' | 'green' | 'yellow'): Chip[] {
-    return this.chips.filter(chip => chip.color === color && chip.isInEndPath);
+    const endPosition = this.colorPositions.find(pos => pos.position === `${color}-end`);
+    return endPosition ? endPosition.chips : [];
   }
 
   getStartSlots(color: 'red' | 'blue' | 'green' | 'yellow'): StartSlot[] {
