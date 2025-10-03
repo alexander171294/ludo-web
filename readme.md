@@ -4,7 +4,7 @@
 
 Juego de Ludo web, para jugar con mi novia sin tener que comerme todos los ads de la store.
 
-Probablemente lo publique gratis en las store con un capacitor, pero creo que ahi le voy a dedicar un poco de tiempo a la escala de css porque el tablero esta medio picado para el responsive y lo solucioné rapido con un scale, aunque no es dificil de corregir me da paja.
+Probablemente lo publique gratis en las store con un capacitor, pero creo que ahi le voy a dedicar un poco de tiempo al responsive de css porque el tablero esta medio picado y como no quedaba bien lo solucioné rapido con un scale, aunque no es dificil de corregir me da paja.
 
 ## Screenshots
 
