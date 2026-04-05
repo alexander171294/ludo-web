@@ -849,9 +849,9 @@ export class LudoGameStateManager {
     return 0; // Fallback
   }
 
-  // Verificar si un jugador ganó
+  // Verificar si un jugador ganó: todas las fichas en el carril final (meta).
   private isPlayerWinner(player: Player): boolean {
-    return player.pieces.every(piece => piece.isInEndPath && piece.endPathPosition === END_PATH_SIZE);
+    return player.pieces.every((piece) => piece.isInEndPath);
   }
 
   // Actualizar estado del juego
