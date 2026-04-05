@@ -57,6 +57,8 @@ export interface LudoGameState {
   decisionStartTime?: Date; // Cuándo empezó el tiempo de decisión
   decisionDuration: number; // Duración del tiempo de decisión (30000 = 30 segundos)
   lastMove?: LastMove; // Último movimiento realizado
+  /** Cuántos 6 ha sacado el jugador en turno en esta ronda (máx. 2; el tercer 6 no da otra tirada). Se resetea al pasar el turno. */
+  sixesRolledThisTurn: number;
   lastUpdated: Date;
   version: number; // Para control de versiones en el watchdog
 }
@@ -123,6 +125,7 @@ export class LudoGameStateManager {
       selectedPieceId: undefined,
       decisionStartTime: undefined,
       decisionDuration: 30000, // 30 segundos para tomar decisiones
+      sixesRolledThisTurn: 0,
       lastUpdated: new Date(),
       version: 1,
     };
@@ -201,6 +204,7 @@ export class LudoGameStateManager {
     gameState.gamePhase = 'playing';
     gameState.gameStarted = true;
     gameState.currentPlayer = 0;
+    gameState.sixesRolledThisTurn = 0;
     gameState.canRollDice = true;
     gameState.canMovePiece = false;
     
@@ -253,6 +257,9 @@ export class LudoGameStateManager {
     }
     gameState.diceValue = diceValue;
     gameState.canRollDice = false;
+    if (diceValue === 6) {
+      gameState.sixesRolledThisTurn += 1;
+    }
 
     // Marcar que el jugador está lanzando el dado (para animación)
     currentPlayer.action = 'rolling';
@@ -286,14 +293,7 @@ export class LudoGameStateManager {
       currentPlayer.action = undefined;
       currentPlayer.diceValue = undefined;
       gameState.decisionStartTime = undefined;
-      gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
-      gameState.canRollDice = true;
-      gameState.canMovePiece = false;
-      
-      // Marcar al siguiente jugador como en turno
-      const nextPlayer = gameState.players[gameState.currentPlayer];
-      nextPlayer.action = 'roll_dice';
-      gameState.decisionStartTime = new Date();
+      this.passTurnToNextPlayer(gameState);
     } else if (availablePieces.length === 1) {
       // Solo una pieza puede moverse, seleccionarla automáticamente
       gameState.selectedPieceId = availablePieces[0].id;
@@ -428,24 +428,20 @@ export class LudoGameStateManager {
     currentPlayer.diceValue = undefined;
     gameState.decisionStartTime = undefined;
 
-    // Si sacó 6, puede tirar de nuevo
-    if (gameState.diceValue === 6) {
+    // Con 6 puede repetir tirada (máx. dos 6 por ronda). Comer una ficha enemiga también da otra tirada.
+    const hadCapture = capturedPieces.length > 0;
+    const mayRollAgainAfterSix =
+      gameState.diceValue === 6 && gameState.sixesRolledThisTurn < 2;
+    const mayRollAgain = mayRollAgainAfterSix || hadCapture;
+
+    if (mayRollAgain) {
       gameState.canRollDice = true;
       gameState.canMovePiece = false;
       gameState.selectedPieceId = undefined;
-      // Marcar al jugador actual como en turno
       currentPlayer.action = 'roll_dice';
       gameState.decisionStartTime = new Date();
     } else {
-      // Pasar turno al siguiente jugador
-      gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
-      gameState.canRollDice = true;
-      gameState.canMovePiece = false;
-      gameState.selectedPieceId = undefined;
-      // Marcar al siguiente jugador como en turno
-      const nextPlayer = gameState.players[gameState.currentPlayer];
-      nextPlayer.action = 'roll_dice';
-      gameState.decisionStartTime = new Date();
+      this.passTurnToNextPlayer(gameState);
     }
 
     this.updateGameState(gameId, gameState);
@@ -852,6 +848,17 @@ export class LudoGameStateManager {
   // Verificar si un jugador ganó: todas las fichas en el carril final (meta).
   private isPlayerWinner(player: Player): boolean {
     return player.pieces.every((piece) => piece.isInEndPath);
+  }
+
+  private passTurnToNextPlayer(gameState: LudoGameState): void {
+    gameState.sixesRolledThisTurn = 0;
+    gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
+    gameState.canRollDice = true;
+    gameState.canMovePiece = false;
+    gameState.selectedPieceId = undefined;
+    const nextPlayer = gameState.players[gameState.currentPlayer];
+    nextPlayer.action = 'roll_dice';
+    gameState.decisionStartTime = new Date();
   }
 
   // Actualizar estado del juego
