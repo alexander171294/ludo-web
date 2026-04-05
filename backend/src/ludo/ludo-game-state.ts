@@ -73,8 +73,10 @@ export interface GameAction {
 
 const COLORS = ['red', 'blue', 'yellow', 'green'];
 const BOARD_SIZE = 52;
-const COLOR_PATH_SIZE = 5; // cp1 a cp5 (cp0 es la entry position)
+const COLOR_PATH_SIZE = 5; // cp1 a cp5 (la entrada al carril es pENTRY, no cp0)
 const END_PATH_SIZE = 4; // ep1 a ep4
+/** Pasos desde la casilla de entrada hasta ep4 (inclusive). */
+const MAX_STEPS_FROM_ENTRY = COLOR_PATH_SIZE + END_PATH_SIZE;
 
 // Posiciones de entrada al color path para cada color
 const COLOR_PATH_ENTRY_POSITIONS = {
@@ -453,11 +455,11 @@ export class LudoGameStateManager {
 
   // Obtener piezas que pueden moverse
   public getAvailablePieces(player: Player, diceValue: number): Piece[] {
-    return player.pieces.filter(piece => this.canMovePiece(piece, diceValue));
+    return player.pieces.filter(piece => this.canMovePiece(piece, diceValue, player.color));
   }
 
   // Verificar si una ficha puede moverse
-  private canMovePiece(piece: Piece, diceValue: number): boolean {
+  private canMovePiece(piece: Piece, diceValue: number, playerColor: string): boolean {
     // Si está en start zone, puede salir con 1 o 6
     if (piece.isInStartZone) {
       return diceValue === 1 || diceValue === 6;
@@ -472,17 +474,40 @@ export class LudoGameStateManager {
     if (piece.isInColorPath) {
       const currentPos = piece.colorPathPosition || 0;
       const newPos = currentPos + diceValue;
-      // Permitir movimientos que se mantengan dentro del color path (newPos <= COLOR_PATH_SIZE)
-      // o que lleven al end path (newPos > COLOR_PATH_SIZE)
-      return newPos <= COLOR_PATH_SIZE + 1; // cp1 a cp5, o cp6 que va a ep1
+      return newPos <= COLOR_PATH_SIZE + END_PATH_SIZE;
     }
 
-    // Si está en el tablero, puede moverse normalmente
+    // Si está en el tablero, puede moverse si el destino es legal (incl. carril + end)
     if (piece.isInBoard) {
-      return true;
+      return this.canMoveFromBoard(piece.boardPosition!, diceValue, playerColor);
     }
 
     return false;
+  }
+
+  /** Valida movimiento en el anillo antes de ejecutarlo (incluye cruce a carril de color y meta). */
+  private canMoveFromBoard(boardPosition: number, diceValue: number, color: string): boolean {
+    const newPos = boardPosition + diceValue;
+    const entryPos = COLOR_PATH_ENTRY_POSITIONS[color as keyof typeof COLOR_PATH_ENTRY_POSITIONS];
+    const needsWrapping = entryPos < boardPosition;
+
+    if (needsWrapping) {
+      if (newPos >= BOARD_SIZE) {
+        const wrappedPos = newPos % BOARD_SIZE;
+        if (wrappedPos === entryPos) return true;
+        if (wrappedPos > entryPos) {
+          const colorPathPos = wrappedPos - entryPos;
+          return colorPathPos <= MAX_STEPS_FROM_ENTRY;
+        }
+      }
+      return true;
+    }
+
+    if (newPos > entryPos) {
+      const colorPathPos = newPos - entryPos;
+      return colorPathPos <= MAX_STEPS_FROM_ENTRY;
+    }
+    return true;
   }
 
   // Mover una ficha
@@ -523,10 +548,13 @@ export class LudoGameStateManager {
               piece.colorPathPosition = colorPathPos;
               piece.boardPosition = undefined;
             } else {
-              // Pasar de largo, continuar en el tablero
-              piece.position = `p${wrappedPos}`;
-              piece.boardPosition = wrappedPos;
-              this.checkCapture(piece, wrappedPos, color, allPlayers);
+              // Supera el carril de color: meta (ep1–ep4)
+              const endPathPos = colorPathPos - COLOR_PATH_SIZE;
+              piece.isInBoard = false;
+              piece.isInEndPath = true;
+              piece.position = `ep${endPathPos}`;
+              piece.endPathPosition = endPathPos;
+              piece.boardPosition = undefined;
             }
           } else {
             // Continuar en el tablero después de dar la vuelta
@@ -543,7 +571,6 @@ export class LudoGameStateManager {
       } else {
         // La pieza no necesita dar la vuelta, lógica normal
         if (newPos > entryPos) {
-          // Entrar al color path
           const colorPathPos = newPos - entryPos;
           if (colorPathPos <= COLOR_PATH_SIZE) {
             piece.isInBoard = false;
@@ -552,19 +579,18 @@ export class LudoGameStateManager {
             piece.colorPathPosition = colorPathPos;
             piece.boardPosition = undefined;
           } else {
-            // Pasar de largo, continuar en el tablero
-            const finalPos = newPos % BOARD_SIZE;
-            piece.position = `p${finalPos}`;
-            piece.boardPosition = finalPos;
-            this.checkCapture(piece, finalPos, color, allPlayers);
+            const endPathPos = colorPathPos - COLOR_PATH_SIZE;
+            piece.isInBoard = false;
+            piece.isInEndPath = true;
+            piece.position = `ep${endPathPos}`;
+            piece.endPathPosition = endPathPos;
+            piece.boardPosition = undefined;
           }
         } else if (newPos === entryPos) {
-          // Llegar exactamente a la entry position, quedarse en el tablero
           piece.position = `p${newPos}`;
           piece.boardPosition = newPos;
           this.checkCapture(piece, newPos, color, allPlayers);
         } else {
-          // Continuar en el tablero
           piece.position = `p${newPos}`;
           piece.boardPosition = newPos;
           this.checkCapture(piece, newPos, color, allPlayers);
@@ -575,9 +601,8 @@ export class LudoGameStateManager {
       const currentPos = piece.colorPathPosition || 0;
       const newPos = currentPos + diceValue;
 
-      if (newPos >= COLOR_PATH_SIZE) {
-        // Entrar al end path
-        const endPathPos = newPos - COLOR_PATH_SIZE + 1; // ep1 a ep4
+      if (newPos > COLOR_PATH_SIZE) {
+        const endPathPos = newPos - COLOR_PATH_SIZE;
         if (endPathPos <= END_PATH_SIZE) {
           piece.isInColorPath = false;
           piece.isInEndPath = true;
@@ -704,11 +729,12 @@ export class LudoGameStateManager {
               piece.colorPathPosition = colorPathPos;
               piece.boardPosition = undefined;
             } else {
-              // Pasar de largo, continuar en el tablero
-              piece.position = `p${wrappedPos}`;
-              piece.boardPosition = wrappedPos;
-              const captured = this.checkCapture(piece, wrappedPos, color, allPlayers);
-              capturedPieces.push(...captured);
+              const endPathPos = colorPathPos - COLOR_PATH_SIZE;
+              piece.isInBoard = false;
+              piece.isInEndPath = true;
+              piece.position = `ep${endPathPos}`;
+              piece.endPathPosition = endPathPos;
+              piece.boardPosition = undefined;
             }
           } else {
             // Continuar en el tablero después de dar la vuelta
@@ -727,7 +753,6 @@ export class LudoGameStateManager {
       } else {
         // La pieza no necesita dar la vuelta, lógica normal
         if (newPos > entryPos) {
-          // Entrar al color path
           const colorPathPos = newPos - entryPos;
           if (colorPathPos <= COLOR_PATH_SIZE) {
             piece.isInBoard = false;
@@ -736,12 +761,12 @@ export class LudoGameStateManager {
             piece.colorPathPosition = colorPathPos;
             piece.boardPosition = undefined;
           } else {
-            // Pasar de largo, continuar en el tablero
-            const finalPos = newPos % BOARD_SIZE;
-            piece.position = `p${finalPos}`;
-            piece.boardPosition = finalPos;
-            const captured = this.checkCapture(piece, finalPos, color, allPlayers);
-            capturedPieces.push(...captured);
+            const endPathPos = colorPathPos - COLOR_PATH_SIZE;
+            piece.isInBoard = false;
+            piece.isInEndPath = true;
+            piece.position = `ep${endPathPos}`;
+            piece.endPathPosition = endPathPos;
+            piece.boardPosition = undefined;
           }
         } else if (newPos === entryPos) {
           // Llegar exactamente a la entry position, quedarse en el tablero
@@ -758,33 +783,32 @@ export class LudoGameStateManager {
         }
       }
     } else if (piece.isInColorPath) {
-      // Mover en color path
       const currentPos = piece.colorPathPosition || 0;
       const newPos = currentPos + diceValue;
-      
+
       if (newPos > COLOR_PATH_SIZE) {
-        // Ir al end path
+        const endPathPos = newPos - COLOR_PATH_SIZE;
+        if (endPathPos > END_PATH_SIZE) {
+          return capturedPieces;
+        }
         piece.isInColorPath = false;
         piece.isInEndPath = true;
-        piece.position = 'ep';
-        piece.endPathPosition = 1;
+        piece.position = `ep${endPathPos}`;
+        piece.endPathPosition = endPathPos;
         piece.colorPathPosition = undefined;
       } else {
         piece.colorPathPosition = newPos;
         piece.position = `cp${newPos}`;
       }
     } else if (piece.isInEndPath) {
-      // Mover en end path
       const currentPos = piece.endPathPosition || 1;
       const newPos = currentPos + diceValue;
-      
+
       if (newPos > END_PATH_SIZE) {
-        // No puede moverse más
         return capturedPieces;
-      } else {
-        piece.endPathPosition = newPos;
-        piece.position = `ep`;
       }
+      piece.endPathPosition = newPos;
+      piece.position = `ep${newPos}`;
     }
 
     return capturedPieces;
@@ -806,6 +830,8 @@ export class LudoGameStateManager {
       return 'color_move';
     } else if (piece.isInEndPath && fromPosition.startsWith('ep')) {
       return 'end_move';
+    } else if (piece.isInEndPath && fromPosition.startsWith('p')) {
+      return 'color_to_end';
     }
     return 'board_move';
   }
